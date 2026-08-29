@@ -346,6 +346,7 @@ export const SAMPLE_REGIONAL_RECIPES: Recipe[] = [
     title: 'High-Protein One-Pot Jollof Black-Eyed Beans',
     cuisine: 'west_african',
     mealType: 'lunch',
+    imageUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop&q=80',
     prepTimeMinutes: 10,
     cookTimeMinutes: 30,
     servings: 4,
@@ -383,7 +384,8 @@ export const SAMPLE_REGIONAL_RECIPES: Recipe[] = [
     id: 'rec-med-chickpea-shakshuka',
     title: 'Savory Chickpea & Egg Skillet Shakshuka',
     cuisine: 'mediterranean',
-    mealType: 'dinner',
+    mealType: 'breakfast',
+    imageUrl: 'https://images.unsplash.com/photo-1590412200988-a436970781fa?w=800&auto=format&fit=crop&q=80',
     prepTimeMinutes: 8,
     cookTimeMinutes: 18,
     servings: 3,
@@ -421,6 +423,7 @@ export const SAMPLE_REGIONAL_RECIPES: Recipe[] = [
     title: 'Crispy Black Bean & Salsa Quinoa/Rice Bowl',
     cuisine: 'latin_american',
     mealType: 'dinner',
+    imageUrl: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format&fit=crop&q=80',
     prepTimeMinutes: 10,
     cookTimeMinutes: 15,
     servings: 4,
@@ -459,6 +462,7 @@ export const SAMPLE_REGIONAL_RECIPES: Recipe[] = [
     title: 'Ginger Sesame Golden Tofu & Egg Scramble with Rice',
     cuisine: 'east_asian',
     mealType: 'lunch',
+    imageUrl: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&auto=format&fit=crop&q=80',
     prepTimeMinutes: 8,
     cookTimeMinutes: 10,
     servings: 2,
@@ -492,6 +496,7 @@ export const SAMPLE_REGIONAL_RECIPES: Recipe[] = [
     title: 'Golden Turmeric Red Lentil Tadka Dal with Roti',
     cuisine: 'south_asian',
     mealType: 'dinner',
+    imageUrl: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=800&auto=format&fit=crop&q=80',
     prepTimeMinutes: 5,
     cookTimeMinutes: 20,
     servings: 4,
@@ -519,8 +524,152 @@ export const SAMPLE_REGIONAL_RECIPES: Recipe[] = [
     budgetTips: ['One of the lowest cost-per-gram protein meals on Earth (under $1.00 per hearty dinner).'],
     regionalNotes: 'Time-tested Ayurvedic staple known for anti-inflammatory curcumin absorption and soothing digestion.',
     tags: ['Under $1 Meal', 'Pure Comfort', 'High Protein', 'Vegan']
+  },
+  // NORTH AMERICAN
+  {
+    id: 'rec-na-power-oats',
+    title: 'High-Protein Peanut Butter & Berry Rolled Oats Bowl',
+    cuisine: 'north_american',
+    mealType: 'breakfast',
+    imageUrl: 'https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=800&auto=format&fit=crop&q=80',
+    prepTimeMinutes: 5,
+    cookTimeMinutes: 5,
+    servings: 1,
+    estimatedCostPerServing: 0.85,
+    totalCost: 0.85,
+    calories: 450,
+    proteinGrams: 25,
+    carbsGrams: 58,
+    fatGrams: 14,
+    fiberGrams: 9,
+    ingredients: [
+      { name: 'Rolled Oats', amount: '1 cup', estimatedCost: 0.25, category: 'grains_pantry' },
+      { name: 'Natural Peanut Butter', amount: '2 tbsp', estimatedCost: 0.30, category: 'protein' },
+      { name: 'Milk or Soy Milk', amount: '1 cup', estimatedCost: 0.20, category: 'dairy_alt' },
+      { name: 'Frozen Berries or Sliced Banana', amount: '1/2 cup', estimatedCost: 0.10, category: 'produce' }
+    ],
+    instructions: [
+      'Simmer rolled oats with milk and a pinch of salt for 4 minutes until thick and creamy.',
+      'Stir in peanut butter while hot so it melts evenly throughout.',
+      'Top with thawed berries and a pinch of cinnamon.'
+    ],
+    budgetTips: ['Buy store-brand 1kg tubs of oats and peanut butter for huge savings.'],
+    regionalNotes: 'Classic high-energy morning fuel packed with complex carbs and healthy fats.',
+    tags: ['5-Minute Prep', 'High Protein', 'Under $1', 'Vegetarian']
   }
 ];
+
+// CULINARY IMAGE CATALOG & HELPER
+export const MEAL_IMAGE_CATALOG: Record<string, string> = {
+  breakfast_oats: 'https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=800&auto=format&fit=crop&q=80',
+  breakfast_eggs: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=800&auto=format&fit=crop&q=80',
+  breakfast_shakshuka: 'https://images.unsplash.com/photo-1590412200988-a436970781fa?w=800&auto=format&fit=crop&q=80',
+  breakfast_smoothie: 'https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=800&auto=format&fit=crop&q=80',
+  lunch_bowl: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format&fit=crop&q=80',
+  lunch_stirfry: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&auto=format&fit=crop&q=80',
+  lunch_salad: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800&auto=format&fit=crop&q=80',
+  lunch_rice_beans: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop&q=80',
+  dinner_curry: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=800&auto=format&fit=crop&q=80',
+  dinner_salmon: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&auto=format&fit=crop&q=80',
+  dinner_chicken: 'https://images.unsplash.com/photo-1543339308-43e59d6b73a6?w=800&auto=format&fit=crop&q=80',
+  dinner_stew: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=800&auto=format&fit=crop&q=80'
+};
+
+export function getMealImageUrl(recipe: Partial<Recipe> | undefined): string {
+  if (!recipe) return MEAL_IMAGE_CATALOG.lunch_bowl;
+  if (recipe.imageUrl && recipe.imageUrl.startsWith('http')) {
+    return recipe.imageUrl;
+  }
+
+  const titleLower = (recipe.title || '').toLowerCase();
+  const mealType = recipe.mealType || 'lunch';
+
+  if (titleLower.includes('shakshuka')) return MEAL_IMAGE_CATALOG.breakfast_shakshuka;
+  if (titleLower.includes('oat') || titleLower.includes('porridge')) return MEAL_IMAGE_CATALOG.breakfast_oats;
+  if (titleLower.includes('egg') || titleLower.includes('toast')) return MEAL_IMAGE_CATALOG.breakfast_eggs;
+  if (titleLower.includes('smoothie')) return MEAL_IMAGE_CATALOG.breakfast_smoothie;
+  if (titleLower.includes('tofu') || titleLower.includes('stir-fry') || titleLower.includes('noodle')) return MEAL_IMAGE_CATALOG.lunch_stirfry;
+  if (titleLower.includes('jollof') || titleLower.includes('bean') || titleLower.includes('rice')) return MEAL_IMAGE_CATALOG.lunch_rice_beans;
+  if (titleLower.includes('dal') || titleLower.includes('curry') || titleLower.includes('lentil')) return MEAL_IMAGE_CATALOG.dinner_curry;
+  if (titleLower.includes('salmon') || titleLower.includes('fish') || titleLower.includes('tuna')) return MEAL_IMAGE_CATALOG.dinner_salmon;
+  if (titleLower.includes('chicken') || titleLower.includes('turkey')) return MEAL_IMAGE_CATALOG.dinner_chicken;
+  if (titleLower.includes('stew') || titleLower.includes('soup')) return MEAL_IMAGE_CATALOG.dinner_stew;
+  if (titleLower.includes('salad') || titleLower.includes('greek')) return MEAL_IMAGE_CATALOG.lunch_salad;
+
+  if (mealType === 'breakfast') return MEAL_IMAGE_CATALOG.breakfast_eggs;
+  if (mealType === 'dinner') return MEAL_IMAGE_CATALOG.dinner_stew;
+  return MEAL_IMAGE_CATALOG.lunch_bowl;
+}
+
+// DAILY WORKOUT MOTIVATIONAL PHRASES FOR TRAINING KICKOFF
+export interface WorkoutMotivationQuote {
+  id: string;
+  quote: string;
+  author: string;
+  category: 'strength' | 'discipline' | 'resilience' | 'energy' | 'mindset';
+  sparkIcon: string;
+}
+
+export const DAILY_WORKOUT_MOTIVATIONS: WorkoutMotivationQuote[] = [
+  {
+    id: 'mot-1',
+    quote: '⚡ The body achieves what the mind believes. Give every single rep your total focus!',
+    author: 'Athletic Mindset',
+    category: 'mindset',
+    sparkIcon: '🔥'
+  },
+  {
+    id: 'mot-2',
+    quote: '💪 Small daily disciplines repeated consistently build unbreakable strength.',
+    author: 'Consistency Law',
+    category: 'discipline',
+    sparkIcon: '🏆'
+  },
+  {
+    id: 'mot-3',
+    quote: '🚀 You don’t have to be extreme, you just have to show up. Step up and crush this workout!',
+    author: 'Coach Principle',
+    category: 'energy',
+    sparkIcon: '⚡'
+  },
+  {
+    id: 'mot-4',
+    quote: '🛡️ Today’s effort is tomorrow’s power. Breathe deep, stay in control, and win today.',
+    author: 'Spartan Wisdom',
+    category: 'strength',
+    sparkIcon: '🛡️'
+  },
+  {
+    id: 'mot-5',
+    quote: '🌟 Your future self is watching your effort right now. Make them proud with this set!',
+    author: 'Daily Momentum',
+    category: 'resilience',
+    sparkIcon: '✨'
+  },
+  {
+    id: 'mot-6',
+    quote: '🔥 Action creates motivation, not the other way around. Let’s ignite your workout energy!',
+    author: 'Biokinetic Focus',
+    category: 'energy',
+    sparkIcon: '💥'
+  },
+  {
+    id: 'mot-7',
+    quote: '👑 The only bad workout is the one that didn’t happen. You made it here — now own it!',
+    author: 'Champion Drive',
+    category: 'strength',
+    sparkIcon: '👑'
+  }
+];
+
+export function getDailyWorkoutMotivation(dayNumber?: number): WorkoutMotivationQuote {
+  if (dayNumber !== undefined && dayNumber > 0) {
+    const idx = (dayNumber - 1) % DAILY_WORKOUT_MOTIVATIONS.length;
+    return DAILY_WORKOUT_MOTIVATIONS[idx];
+  }
+  const dayOfWeek = new Date().getDay(); // 0 to 6
+  return DAILY_WORKOUT_MOTIVATIONS[dayOfWeek % DAILY_WORKOUT_MOTIVATIONS.length];
+}
 
 export const INITIAL_USER_PROFILE: UserProfile = {
   id: 'user-default-1',

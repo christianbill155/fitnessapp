@@ -94,6 +94,7 @@ export interface Recipe {
   title: string;
   cuisine: GeographicRegion;
   mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  imageUrl?: string;
   prepTimeMinutes: number;
   cookTimeMinutes: number;
   servings: number;

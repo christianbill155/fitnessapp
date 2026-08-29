@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Dumbbell, 
   Utensils, 
@@ -12,9 +12,11 @@ import {
   DollarSign,
   User,
   ShieldCheck,
-  Smartphone
+  Smartphone,
+  Palette
 } from 'lucide-react';
 import { UserProfile, AuthUser, AppTab } from '../types';
+import { themeService, AppPersonalization, COLOR_THEMES } from '../services/themeService';
 
 interface NavbarProps {
   activeTab: AppTab | 'monetization';
@@ -23,6 +25,7 @@ interface NavbarProps {
   profile: UserProfile;
   currentUser: AuthUser;
   onOpenSettings: () => void;
+  onOpenPersonalization: () => void;
   onOpenSubscription: () => void;
   onOpenAuth: () => void;
   onOpenOfflineManager: () => void;
@@ -35,11 +38,22 @@ export const Navbar: React.FC<NavbarProps> = ({
   profile,
   currentUser,
   onOpenSettings,
+  onOpenPersonalization,
   onOpenSubscription,
   onOpenAuth,
   onOpenOfflineManager
 }) => {
+  const [personalization, setPersonalization] = useState<AppPersonalization>(() => themeService.getSettings());
+
+  useEffect(() => {
+    const unsub = themeService.subscribe((s) => {
+      setPersonalization(s);
+    });
+    return unsub;
+  }, []);
+
   const isSubscribed = profile.subscription.plan !== 'free';
+  const currentTheme = COLOR_THEMES[personalization.colorTheme] || COLOR_THEMES.emerald;
 
   return (
     <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
@@ -48,17 +62,34 @@ export const Navbar: React.FC<NavbarProps> = ({
           
           {/* Brand Logo & Name */}
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab('workouts')}>
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 text-slate-950 font-black">
+            <div 
+              className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg text-slate-950 font-black transition-all"
+              style={{
+                background: `linear-gradient(135deg, ${currentTheme.primaryHex}, ${currentTheme.secondaryHex})`,
+                boxShadow: personalization.accentGlow ? `0 4px 20px ${currentTheme.glowColor}` : 'none'
+              }}
+            >
               <Dumbbell className="w-5 h-5 stroke-[2.5]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-extrabold text-lg tracking-tight text-white font-['Outfit']">FitRegion</span>
-                <span className="hidden sm:inline-block px-2 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  Home & Budget
+                <span className="font-extrabold text-lg tracking-tight text-white font-['Outfit']">
+                  {personalization.appName}
+                </span>
+                <span 
+                  className="hidden sm:inline-block px-2 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-md"
+                  style={{
+                    backgroundColor: `rgba(${currentTheme.primaryRgb}, 0.12)`,
+                    color: currentTheme.primaryHex,
+                    border: `1px solid rgba(${currentTheme.primaryRgb}, 0.25)`
+                  }}
+                >
+                  {currentTheme.name}
                 </span>
               </div>
-              <p className="hidden md:block text-[11px] text-slate-400">Zero-Equipment Workouts • Region-Smart Nutrition</p>
+              <p className="hidden md:block text-[11px] text-slate-400">
+                {personalization.appSubtitle}
+              </p>
             </div>
           </div>
 
@@ -69,9 +100,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => setActiveTab('workouts')}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
                 activeTab === 'workouts'
-                  ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                  ? 'text-slate-950 shadow-md font-bold'
                   : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
               }`}
+              style={activeTab === 'workouts' ? { 
+                backgroundColor: currentTheme.primaryHex,
+                boxShadow: personalization.accentGlow ? `0 4px 14px ${currentTheme.glowColor}` : 'none'
+              } : {}}
             >
               <Dumbbell className="w-4 h-4" />
               <span className="hidden sm:inline">Workouts</span>
@@ -82,9 +117,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => setActiveTab('nutrition')}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
                 activeTab === 'nutrition'
-                  ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                  ? 'text-slate-950 shadow-md font-bold'
                   : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
               }`}
+              style={activeTab === 'nutrition' ? { 
+                backgroundColor: currentTheme.primaryHex,
+                boxShadow: personalization.accentGlow ? `0 4px 14px ${currentTheme.glowColor}` : 'none'
+              } : {}}
             >
               <Utensils className="w-4 h-4" />
               <span className="hidden sm:inline">Budget Meals</span>
@@ -95,9 +134,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => setActiveTab('calories')}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
                 activeTab === 'calories'
-                  ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                  ? 'text-slate-950 shadow-md font-bold'
                   : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
               }`}
+              style={activeTab === 'calories' ? { 
+                backgroundColor: currentTheme.primaryHex,
+                boxShadow: personalization.accentGlow ? `0 4px 14px ${currentTheme.glowColor}` : 'none'
+              } : {}}
             >
               <Flame className="w-4 h-4" />
               <span className="hidden sm:inline">Calorie Tracker</span>
@@ -108,18 +151,32 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => setActiveTab('coach')}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
                 activeTab === 'coach'
-                  ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                  ? 'text-slate-950 shadow-md font-bold'
                   : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
               }`}
+              style={activeTab === 'coach' ? { 
+                backgroundColor: currentTheme.primaryHex,
+                boxShadow: personalization.accentGlow ? `0 4px 14px ${currentTheme.glowColor}` : 'none'
+              } : {}}
             >
               <Bot className="w-4 h-4" />
               <span className="hidden sm:inline">AI Coach</span>
             </button>
           </nav>
 
-          {/* Right utility buttons: Auth profile, Online/Offline pill, Sub status, Settings */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          {/* Right utility buttons: Personalize, Auth profile, Online/Offline pill, Sub status, Settings */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
             
+            {/* Quick Personalize Trigger */}
+            <button
+              onClick={onOpenPersonalization}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 hover:text-white transition-all shadow-sm"
+              title="Personalize Color Themes, Custom Wallpapers, Units & Mottos"
+            >
+              <Palette className="w-3.5 h-3.5" style={{ color: currentTheme.primaryHex }} />
+              <span className="hidden lg:inline text-[11px]">Personalize</span>
+            </button>
+
             {/* User Account / Auth Button */}
             <button
               id="header-user-auth-btn"
@@ -128,14 +185,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                 currentUser.isOwner
                   ? 'bg-amber-500/10 border-amber-500/40 text-amber-300 hover:bg-amber-500/20'
                   : currentUser.role === 'guest'
-                  ? 'bg-slate-800 border-emerald-500/30 text-emerald-300 hover:bg-slate-700'
+                  ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700'
                   : 'bg-slate-800 border-slate-700 text-slate-200 hover:border-slate-600'
               }`}
               title="Account & Auth"
             >
               <span>{currentUser.avatar || (currentUser.isOwner ? '👑' : '👤')}</span>
-              <span className="max-w-[80px] sm:max-w-[110px] truncate text-[11px]">
-                {currentUser.isOwner ? 'Owner (Free VIP)' : currentUser.displayName}
+              <span className="max-w-[70px] sm:max-w-[100px] truncate text-[11px]">
+                {currentUser.isOwner ? 'Owner (VIP)' : currentUser.displayName}
               </span>
             </button>
 
@@ -143,7 +200,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={onOpenOfflineManager}
               title={isOnline ? 'Online & Synced (Click to view Offline & PWA Hub)' : 'Offline Mode (Click to manage Cache & Backup)'}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${
+              className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${
                 isOnline 
                   ? 'bg-emerald-950/60 border-emerald-500/30 text-emerald-400 hover:bg-emerald-900/40' 
                   : 'bg-amber-950/60 border-amber-500/30 text-amber-300 hover:bg-amber-900/40'
@@ -152,12 +209,12 @@ export const Navbar: React.FC<NavbarProps> = ({
               {isOnline ? (
                 <>
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="hidden lg:inline text-[11px]">PWA Ready</span>
+                  <span className="hidden xl:inline text-[11px]">PWA Ready</span>
                 </>
               ) : (
                 <>
                   <WifiOff className="w-3 h-3 text-amber-400" />
-                  <span className="hidden lg:inline text-[11px]">Offline App</span>
+                  <span className="hidden xl:inline text-[11px]">Offline App</span>
                 </>
               )}
             </button>
@@ -169,12 +226,12 @@ export const Navbar: React.FC<NavbarProps> = ({
               className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border transition-all ${
                 currentUser.isOwner || isSubscribed
                   ? 'bg-amber-500/10 border-amber-500/30 text-amber-300 hover:bg-amber-500/20'
-                  : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-emerald-500/40 hover:text-emerald-300'
+                  : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-600'
               }`}
             >
               <Crown className={`w-3.5 h-3.5 ${currentUser.isOwner || isSubscribed ? 'text-amber-400' : 'text-slate-400'}`} />
               <span className="hidden md:inline">
-                {currentUser.isOwner ? 'VIP Free Pass' : profile.subscription.plan === 'pro_annual' ? 'PRO Annual' : profile.subscription.plan === 'pro_monthly' ? 'PRO Monthly' : profile.subscription.plan === 'lifetime_vip' ? 'VIP Lifetime' : 'Free Trial'}
+                {currentUser.isOwner ? 'VIP Free' : profile.subscription.plan === 'pro_annual' ? 'PRO' : profile.subscription.plan === 'pro_monthly' ? 'PRO' : profile.subscription.plan === 'lifetime_vip' ? 'VIP' : 'Free Trial'}
               </span>
             </button>
 
@@ -183,7 +240,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               id="header-settings-btn"
               onClick={onOpenSettings}
               className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 border border-transparent hover:border-slate-700 transition-colors"
-              title="Profile & Budget Settings"
+              title="Profile & Biometric Settings"
             >
               <Settings className="w-4 h-4" />
             </button>
@@ -194,3 +251,4 @@ export const Navbar: React.FC<NavbarProps> = ({
     </header>
   );
 };
+

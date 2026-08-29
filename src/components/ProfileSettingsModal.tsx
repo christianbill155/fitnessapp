@@ -14,7 +14,8 @@ import {
   CheckCircle2,
   Crown,
   KeyRound,
-  WifiOff
+  WifiOff,
+  Palette
 } from 'lucide-react';
 import { 
   UserProfile, 
@@ -27,6 +28,7 @@ import {
 } from '../types';
 import { REGIONS_META } from '../data/defaultData';
 import { exportAllUserData, importUserData } from '../services/storage';
+import { themeService } from '../services/themeService';
 
 interface ProfileSettingsModalProps {
   profile: UserProfile;
@@ -34,6 +36,7 @@ interface ProfileSettingsModalProps {
   currentUser?: AuthUser;
   onOpenAuth?: () => void;
   onOpenOfflineManager?: () => void;
+  onOpenPersonalization?: () => void;
   onClose: () => void;
 }
 
@@ -43,11 +46,14 @@ export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
   currentUser,
   onOpenAuth,
   onOpenOfflineManager,
+  onOpenPersonalization,
   onClose
 }) => {
   const [formData, setFormData] = useState<UserProfile>(profile);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [importStatus, setImportStatus] = useState<string | null>(null);
+  const themeSettings = themeService.getSettings();
+  const themeDef = themeService.getColorTheme();
 
   // Auto calculate BMR & TDEE
   const calculateMacros = (weight: number, height: number, age: number, gender: string, activity: string, goal: FitnessGoal) => {
@@ -196,6 +202,15 @@ export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
             </div>
 
             <div className="flex items-center gap-2">
+              {onOpenPersonalization && (
+                <button
+                  type="button"
+                  onClick={() => { onClose(); onOpenPersonalization(); }}
+                  className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-all border border-slate-700 hover:border-slate-600"
+                >
+                  <Palette className="w-3.5 h-3.5" style={{ color: themeDef.primaryHex }} /> Personalize App
+                </button>
+              )}
               {onOpenAuth && (
                 <button
                   type="button"
@@ -328,10 +343,10 @@ export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
 
               <div>
                 <label className="text-[11px] text-slate-400 block mb-1">
-                  Monthly Food Budget ($USD)
+                  Monthly Food Budget ({themeSettings.currencySymbol})
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-xs text-slate-400">$</span>
+                  <span className="absolute left-3 top-2.5 text-xs text-slate-400 font-mono font-bold">{themeSettings.currencySymbol}</span>
                   <input
                     type="number"
                     value={formData.monthlyFoodBudgetUSD}
@@ -340,7 +355,7 @@ export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
                   />
                 </div>
                 <span className="text-[10px] text-slate-400 mt-1 block">
-                  ~${Math.round(formData.monthlyFoodBudgetUSD / 30)} / day allowance
+                  ~{themeSettings.currencySymbol}{Math.round(formData.monthlyFoodBudgetUSD / 30)} / day allowance
                 </span>
               </div>
             </div>

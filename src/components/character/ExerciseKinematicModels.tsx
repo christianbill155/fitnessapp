@@ -29,211 +29,216 @@ export const PushupCharacter: React.FC<KinematicProps> = ({
   showMistake,
   showGlow
 }) => {
-  const yDrop = progress * 46;
-  const mistakeSag = showMistake ? Math.sin(progress * Math.PI) * 20 : 0;
+  const yDrop = progress * 48;
+  const mistakeSag = showMistake ? Math.sin(progress * Math.PI) * 22 : 0;
 
   if (viewAngle === 'front') {
-    const elbowFlare = 28 + (showMistake ? 26 : 8) * progress;
-    const handX = 54;
-    const chestY = 120 + yDrop;
+    const elbowFlare = 28 + (showMistake ? 30 : 8) * progress;
+    const handX = 58;
+    const chestY = 118 + yDrop;
 
     return (
       <g transform="translate(200, 0)">
-        {/* Floor Horizon line */}
-        <line x1="-160" y1="210" x2="160" y2="210" stroke="#334155" strokeWidth="2.5" strokeDasharray="6 4" />
+        {/* Floor Horizon & Ambient Shadow */}
+        <ellipse cx="0" cy="214" rx="90" ry="12" fill="#000000" opacity={0.3 + progress * 0.2} filter="url(#contactShadow)" />
+        <line x1="-160" y1="210" x2="160" y2="210" stroke="#475569" strokeWidth="2.5" strokeDasharray="6 4" opacity="0.6" />
 
-        {/* Head Front */}
+        {/* Head Front with Neck */}
         <HumanHeadFront
           x={0}
-          y={chestY - 48}
-          scale={0.9}
+          y={chestY - 50}
+          scale={0.92}
           theme={theme}
           characterType={characterType}
         />
 
-        {/* Muscular Shoulders (Deltoids) */}
-        <ellipse cx={-34} cy={chestY - 14} rx="12" ry="9" fill="url(#skinGrad)" stroke={theme.skinShadow} strokeWidth="0.8" />
-        <ellipse cx={34} cy={chestY - 14} rx="12" ry="9" fill="url(#skinGrad)" stroke={theme.skinShadow} strokeWidth="0.8" />
+        {/* Muscular Shoulders (Deltoid Caps) */}
+        <ellipse cx={-36} cy={chestY - 14} rx="13" ry="10" fill="url(#skinGrad)" stroke={theme.skinDeepShadow} strokeWidth="0.8" />
+        <ellipse cx={36} cy={chestY - 14} rx="13" ry="10" fill="url(#skinGrad)" stroke={theme.skinDeepShadow} strokeWidth="0.8" />
 
-        {/* Torso & Athletic Tank Top */}
+        {/* Athletic Torso & Compression Tank Top */}
         <path
-          d={`M -30 ${chestY - 14} C -34 ${chestY + 15}, -24 ${chestY + 45}, -20 ${chestY + 60} L 20 ${chestY + 60} C 24 ${chestY + 45}, 34 ${chestY + 15}, 30 ${chestY - 14} Z`}
+          d={`M -32 ${chestY - 14} C -36 ${chestY + 16}, -26 ${chestY + 48}, -22 ${chestY + 62} L 22 ${chestY + 62} C 26 ${chestY + 48}, 36 ${chestY + 16}, 32 ${chestY - 14} Z`}
           fill="url(#tankGrad)"
           stroke="#0f172a"
           strokeWidth="1.2"
         />
 
-        {/* Tank Collar and Pectoral Contours */}
-        <path d={`M -14 ${chestY - 14} Q 0 ${chestY - 6} 14 ${chestY - 14}`} fill="none" stroke="#0f172a" strokeWidth="1.5" />
-        <line x1="0" y1={chestY - 4} x2="0" y2={chestY + 28} stroke={theme.apparelShadow} strokeWidth="1.2" opacity="0.6" />
-        <path d={`M -16 ${chestY + 8} Q -4 ${chestY + 12} 0 ${chestY + 10} Q 4 ${chestY + 12} 16 ${chestY + 8}`} fill="none" stroke={theme.apparelShadow} strokeWidth="1.4" opacity="0.7" />
+        {/* Athletic Tank Seams & Pectoral Contours */}
+        <path d={`M -15 ${chestY - 14} Q 0 ${chestY - 6} 15 ${chestY - 14}`} fill="none" stroke="#0f172a" strokeWidth="1.6" />
+        <line x1="0" y1={chestY - 4} x2="0" y2={chestY + 30} stroke={theme.apparelShadow} strokeWidth="1.4" opacity="0.6" />
+        <path d={`M -18 ${chestY + 8} Q -4 ${chestY + 12} 0 ${chestY + 10} Q 4 ${chestY + 12} 18 ${chestY + 8}`} fill="none" stroke={theme.apparelShadow} strokeWidth="1.5" opacity="0.7" />
 
-        {/* Chest Activation Glow */}
+        {/* Chest Activation Heatmap Pulse */}
         {showGlow && (
-          <ellipse cx="0" cy={chestY + 8} rx="26" ry="14" fill="#10b981" opacity="0.65" filter="url(#muscleGlow)" />
+          <ellipse cx="0" cy={chestY + 8} rx="28" ry="15" fill="url(#primaryMuscleHeat)" filter="url(#muscleGlow)" opacity={0.6 + progress * 0.35} />
         )}
 
-        {/* Left Arm (Bicep -> Forearm -> Hand) */}
+        {/* Left Arm: Deltoid -> Bicep -> Forearm */}
         <path
-          d={`M -32 ${chestY - 10} C ${-36 - elbowFlare} ${chestY + 15}, ${-handX - 10} 185, -${handX} 205`}
+          d={`M -34 ${chestY - 10} C ${-38 - elbowFlare} ${chestY + 18}, ${-handX - 8} 185, -${handX} 205`}
           fill="none"
-          stroke="url(#skinGrad)"
-          strokeWidth="13"
+          stroke="url(#limbGrad)"
+          strokeWidth="14"
           strokeLinecap="round"
         />
-        <HumanHand x={-handX} y={205} grip={false} theme={theme} scale={1.2} />
+        <HumanHand x={-handX} y={205} grip={false} theme={theme} scale={1.2} hasWatch={true} />
 
-        {/* Right Arm (Bicep -> Forearm -> Hand) */}
+        {/* Right Arm: Deltoid -> Bicep -> Forearm */}
         <path
-          d={`M 32 ${chestY - 10} C ${36 + elbowFlare} ${chestY + 15}, ${handX + 10} 185, ${handX} 205`}
+          d={`M 34 ${chestY - 10} C ${38 + elbowFlare} ${chestY + 18}, ${handX + 8} 185, ${handX} 205`}
           fill="none"
-          stroke="url(#skinGrad)"
-          strokeWidth="13"
+          stroke="url(#limbGrad)"
+          strokeWidth="14"
           strokeLinecap="round"
         />
         <HumanHand x={handX} y={205} grip={false} theme={theme} scale={1.2} />
 
-        {/* Form Metric Angle Overlay */}
+        {/* Form Angle Telemetry */}
         <path
-          d={`M -30 ${chestY - 10} L ${-30 - elbowFlare} ${chestY + 18} L -${handX} 205`}
-          stroke={showMistake ? '#f43f5e' : '#38bdf8'}
+          d={`M -32 ${chestY - 10} L ${-34 - elbowFlare} ${chestY + 18} L -${handX} 205`}
+          stroke={showMistake ? '#f43f5e' : '#10b981'}
           strokeWidth="2"
           strokeDasharray="4 3"
           fill="none"
         />
-        <text x={-handX - 50} y={chestY + 20} fill={showMistake ? '#f43f5e' : '#38bdf8'} fontSize="10" fontFamily="monospace" fontWeight="bold">
+        <text x={-handX - 56} y={chestY + 22} fill={showMistake ? '#f43f5e' : '#10b981'} fontSize="11" fontFamily="sans-serif" fontWeight="bold">
           {showMistake ? 'Flared 90° ❌' : '45° Arrow ✅'}
         </text>
       </g>
     );
   }
 
-  // Side View (High-Fidelity Plank & Press Kinematics)
+  // Side View (High-Fidelity Athletic Pushup Kinematics)
   const headX = 105;
-  const headY = 115 + yDrop;
+  const headY = 114 + yDrop;
   const shoulderX = 138;
-  const shoulderY = 125 + yDrop;
-  const hipX = 220;
-  const hipY = 135 + yDrop + mistakeSag;
-  const kneeX = 275;
+  const shoulderY = 124 + yDrop;
+  const hipX = 222;
+  const hipY = 134 + yDrop + mistakeSag;
+  const kneeX = 278;
   const kneeY = 160 + (mistakeSag * 0.5);
-  const footX = 330;
+  const footX = 332;
   const footY = 195;
 
   const handX = 138;
   const handY = 205;
-  const elbowX = 165 - (progress * 18);
-  const elbowY = 160 + (progress * 12);
+  const elbowX = 168 - (progress * 18);
+  const elbowY = 162 + (progress * 14);
 
   return (
     <g>
-      {/* Floor with depth shadow */}
-      <line x1="60" y1="205" x2="360" y2="205" stroke="#334155" strokeWidth="3" />
-      <line x1="70" y1="208" x2="350" y2="208" stroke="#1e293b" strokeWidth="1.5" />
+      {/* Studio Floor & Dynamic Shadow */}
+      <line x1="50" y1="205" x2="370" y2="205" stroke="#475569" strokeWidth="2.5" opacity="0.6" />
+      <ellipse cx={230} cy="207" rx={120} ry="10" fill="#000000" opacity={0.3 + progress * 0.25} filter="url(#contactShadow)" />
 
-      {/* Far Sneaker (Slight offset for 3D depth) */}
-      <HumanSneaker x={footX + 4} y={footY + 2} facingLeft={true} angle={15} theme={theme} scale={0.9} />
+      {/* Far Sneaker (Slight 3D depth offset) */}
+      <HumanSneaker x={footX + 5} y={footY + 2} facingLeft={true} angle={15} theme={theme} scale={0.92} />
 
       {/* Far Leg */}
       <path
         d={`M ${hipX} ${hipY} L ${kneeX + 4} ${kneeY + 2} L ${footX + 4} ${footY + 2}`}
         fill="none"
         stroke={theme.shortsShadow}
-        strokeWidth="14"
+        strokeWidth="15"
         strokeLinecap="round"
         opacity="0.8"
       />
 
-      {/* Torso Silhouette with realistic chest & lumbar curvature */}
+      {/* Muscular Torso Silhouette with Athletic Compression Tank */}
       <path
         d={`M ${shoulderX} ${shoulderY} C ${shoulderX + 30} ${shoulderY - 5}, ${hipX - 30} ${hipY - 10 + mistakeSag}, ${hipX} ${hipY}`}
         fill="none"
         stroke={showMistake ? 'url(#mistakeGrad)' : 'url(#tankGrad)'}
-        strokeWidth="24"
+        strokeWidth="25"
         strokeLinecap="round"
       />
 
-      {/* Muscular Chest Pectoral contour on side */}
+      {/* Pectoral Side Contour */}
       <path
-        d={`M ${shoulderX - 4} ${shoulderY + 2} Q ${shoulderX + 6} ${shoulderY + 12} ${shoulderX + 18} ${shoulderY + 6}`}
+        d={`M ${shoulderX - 5} ${shoulderY + 2} Q ${shoulderX + 6} ${shoulderY + 12} ${shoulderX + 18} ${shoulderY + 6}`}
         fill="none"
         stroke={theme.apparelShadow}
         strokeWidth="2"
       />
 
-      {/* Near Leg (Quadriceps & Hamstring curves) */}
+      {/* Near Thigh (Quadriceps / Hamstring Contour) */}
       <path
         d={`M ${hipX} ${hipY} C ${hipX + 25} ${hipY + 8}, ${kneeX - 10} ${kneeY - 4}, ${kneeX} ${kneeY}`}
         fill="none"
         stroke="url(#shortsGrad)"
-        strokeWidth="18"
+        strokeWidth="19"
         strokeLinecap="round"
       />
-      {/* Calf & Shin */}
+      {/* Side Racing Stripe on Shorts */}
+      <path
+        d={`M ${hipX} ${hipY} Q ${hipX + 22} ${hipY + 5} ${kneeX - 4} ${kneeY - 2}`}
+        fill="none"
+        stroke={theme.shortsAccent}
+        strokeWidth="2"
+      />
+
+      {/* Sculpted Calf & Shin */}
       <path
         d={`M ${kneeX} ${kneeY} C ${kneeX + 20} ${kneeY + 14}, ${footX - 15} ${footY - 8}, ${footX} ${footY}`}
         fill="none"
-        stroke="url(#skinGrad)"
-        strokeWidth="13"
+        stroke="url(#limbGrad)"
+        strokeWidth="14"
         strokeLinecap="round"
       />
 
       {/* Near Sneaker on Toe */}
       <HumanSneaker x={footX} y={footY} facingLeft={true} angle={18} theme={theme} scale={1.05} />
 
-      {/* Chest Muscle Glow */}
+      {/* Chest & Tricep Activation Heatmap Glow */}
       {showGlow && (
-        <circle cx={shoulderX + 12} cy={shoulderY + 6} r="18" fill="#10b981" opacity="0.65" filter="url(#muscleGlow)" />
+        <circle cx={shoulderX + 12} cy={shoulderY + 6} r="20" fill="url(#primaryMuscleHeat)" filter="url(#muscleGlow)" opacity={0.65 + progress * 0.3} />
       )}
 
       {/* Arm Kinematics: Shoulder Deltoid -> Bicep -> Elbow -> Forearm -> Hand */}
-      <ellipse cx={shoulderX} cy={shoulderY} rx="9" ry="8" fill="url(#skinGrad)" stroke={theme.skinShadow} strokeWidth="0.8" />
+      <ellipse cx={shoulderX} cy={shoulderY} rx="10" ry="9" fill="url(#skinGrad)" stroke={theme.skinDeepShadow} strokeWidth="0.8" />
       <path
         d={`M ${shoulderX} ${shoulderY} L ${elbowX} ${elbowY} L ${handX} ${handY}`}
         fill="none"
-        stroke="url(#skinGrad)"
-        strokeWidth="13"
+        stroke="url(#limbGrad)"
+        strokeWidth="14"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
 
-      {/* Hand grounded with palm on floor */}
-      <HumanHand x={handX} y={handY} grip={false} theme={theme} scale={1.2} />
+      {/* Stable Grounded Hand with Smartwatch */}
+      <HumanHand x={handX} y={handY} grip={false} theme={theme} scale={1.2} hasWatch={true} />
 
       {/* Head Profile */}
       <HumanHeadSide
         x={headX}
         y={headY}
         facingLeft={true}
-        scale={0.95}
+        scale={0.92}
         theme={theme}
         characterType={characterType}
       />
 
-      {/* Articulation nodes */}
-      <circle cx={shoulderX} cy={shoulderY} r="4.5" fill={theme.joints} />
-      <circle cx={elbowX} cy={elbowY} r="4.5" fill={theme.joints} />
-      <circle cx={hipX} cy={hipY} r="4.5" fill={theme.joints} />
-
-      {/* Biomechanical Spine Alignment Laser */}
+      {/* Neutral Spine Laser Line / Form Indicator */}
       <line
         x1={headX - 10}
-        y1={headY + 10}
-        x2={footX}
+        y1={headY + 15}
+        x2={footX + 10}
         y2={footY}
         stroke={showMistake ? '#f43f5e' : '#10b981'}
-        strokeWidth="1.6"
-        strokeDasharray="4 3"
+        strokeWidth="1.8"
+        strokeDasharray="5 3"
+        opacity="0.8"
       />
-      <text x="210" y={hipY - 20} fill={showMistake ? '#f43f5e' : '#10b981'} fontSize="10" fontFamily="monospace" fontWeight="bold">
-        {showMistake ? '❌ Lower Back Sagging' : '✅ 180° Rigid Plank Line'}
+      <text x="180" y="75" fill={showMistake ? '#f43f5e' : '#10b981'} fontSize="11" fontFamily="sans-serif" fontWeight="bold">
+        {showMistake ? '❌ Hip Sag / Broken Core' : '✅ Rigid Neutral Spine Alignment'}
       </text>
     </g>
   );
 };
 
 /* =========================================================================
-   2. BODYWEIGHT SQUAT KINEMATIC MODEL (Side & Front View)
+   2. SQUAT KINEMATIC MODEL (Side & Front View)
 ========================================================================= */
 export const SquatCharacter: React.FC<KinematicProps> = ({
   progress,
@@ -243,318 +248,379 @@ export const SquatCharacter: React.FC<KinematicProps> = ({
   showMistake,
   showGlow
 }) => {
-  const hipDrop = progress * 62;
-  const hipBack = progress * 38;
-  const kneeForward = progress * 14;
+  const depth = progress * 62;
+  const torsoLean = progress * 16;
+  const kneeValgus = showMistake ? Math.sin(progress * Math.PI) * 16 : 0;
 
   if (viewAngle === 'front') {
-    const kneeValgus = showMistake ? -18 * progress : 14 * progress;
-    const bodyY = 55 + hipDrop;
+    const standWidth = 36;
+    const kneeX = standWidth + 10 - kneeValgus;
+    const hipY = 125 + depth;
+    const headY = hipY - 78;
 
     return (
-      <g transform="translate(200, 10)">
-        {/* Floor */}
-        <line x1="-140" y1="210" x2="140" y2="210" stroke="#334155" strokeWidth="2.5" />
+      <g transform="translate(200, 0)">
+        {/* Floor Horizon & Shadow */}
+        <ellipse cx="0" cy="208" rx={60 + progress * 10} ry="10" fill="#000000" opacity="0.3" filter="url(#contactShadow)" />
+        <line x1="-150" y1="205" x2="150" y2="205" stroke="#475569" strokeWidth="2.5" opacity="0.6" />
 
         {/* Head */}
-        <HumanHeadFront
-          x={0}
-          y={bodyY - 42}
-          scale={0.95}
-          theme={theme}
-          characterType={characterType}
-        />
+        <HumanHeadFront x={0} y={headY} scale={0.92} theme={theme} characterType={characterType} />
 
-        {/* Muscular Shoulders & Traps */}
-        <ellipse cx={-30} cy={bodyY - 8} rx="10" ry="8" fill="url(#skinGrad)" />
-        <ellipse cx={30} cy={bodyY - 8} rx="10" ry="8" fill="url(#skinGrad)" />
-
-        {/* Torso Tank Top */}
+        {/* Upper Body Torso */}
         <path
-          d={`M -28 ${bodyY - 8} C -32 ${bodyY + 20}, -24 ${bodyY + 45}, -20 ${bodyY + 58} L 20 ${bodyY + 58} C 24 ${bodyY + 45}, 32 ${bodyY + 20}, 28 ${bodyY - 8} Z`}
+          d={`M -26 ${headY + 26} C -30 ${hipY - 25}, -22 ${hipY - 10}, -18 ${hipY} L 18 ${hipY} C 22 ${hipY - 10}, 30 ${hipY - 25}, 26 ${headY + 26} Z`}
           fill="url(#tankGrad)"
           stroke="#0f172a"
           strokeWidth="1.2"
         />
 
-        {/* Arms clasped in front of chest in athletic prayer posture */}
+        {/* Chest & Deltoids */}
+        <ellipse cx="-28" cy={headY + 28} rx="10" ry="8" fill="url(#skinGrad)" stroke={theme.skinDeepShadow} strokeWidth="0.8" />
+        <ellipse cx="28" cy={headY + 28} rx="10" ry="8" fill="url(#skinGrad)" stroke={theme.skinDeepShadow} strokeWidth="0.8" />
+
+        {/* Hands in Athletic Prayer / Counterbalance Stance */}
         <path
-          d={`M -26 ${bodyY - 4} Q -20 ${bodyY + 18} 0 ${bodyY + 16} Q 20 ${bodyY + 18} 26 ${bodyY - 4}`}
+          d={`M -28 ${headY + 30} Q -18 ${headY + 50} 0 ${headY + 46}`}
           fill="none"
-          stroke="url(#skinGrad)"
-          strokeWidth="10"
+          stroke="url(#limbGrad)"
+          strokeWidth="12"
           strokeLinecap="round"
         />
-        <HumanHand x={0} y={bodyY + 16} grip={true} theme={theme} scale={1.1} />
+        <path
+          d={`M 28 ${headY + 30} Q 18 ${headY + 50} 0 ${headY + 46}`}
+          fill="none"
+          stroke="url(#limbGrad)"
+          strokeWidth="12"
+          strokeLinecap="round"
+        />
+        <HumanHand x={0} y={headY + 46} grip={true} theme={theme} scale={1.1} />
 
         {/* Athletic Shorts */}
         <path
-          d={`M -22 ${bodyY + 56} L -30 ${bodyY + 85} L -6 ${bodyY + 88} L 0 ${bodyY + 68} L 6 ${bodyY + 88} L 30 ${bodyY + 85} L 22 ${bodyY + 56} Z`}
+          d={`M -20 ${hipY} L -26 ${hipY + 24} L 0 ${hipY + 18} L 26 ${hipY + 24} L 20 ${hipY} Z`}
           fill="url(#shortsGrad)"
           stroke="#0f172a"
-          strokeWidth="1"
+          strokeWidth="1.2"
         />
 
-        {/* Left Leg: Quad -> Knee -> Calf -> Sneaker */}
-        <path
-          d={`M -18 ${bodyY + 85} C ${-28 - kneeValgus} ${bodyY + 105}, ${-32} 175, -34 195`}
-          fill="none"
-          stroke="url(#skinGrad)"
-          strokeWidth="14"
-          strokeLinecap="round"
-        />
-        <HumanSneaker x={-36} y={202} facingLeft={true} angle={-5} theme={theme} scale={1.05} />
-
-        {/* Right Leg: Quad -> Knee -> Calf -> Sneaker */}
-        <path
-          d={`M 18 ${bodyY + 85} C ${28 + kneeValgus} ${bodyY + 105}, ${32} 175, 34 195`}
-          fill="none"
-          stroke="url(#skinGrad)"
-          strokeWidth="14"
-          strokeLinecap="round"
-        />
-        <HumanSneaker x={36} y={202} facingLeft={false} angle={5} theme={theme} scale={1.05} />
-
-        {/* Quad Muscle Glow */}
+        {/* Quads Activation Heatmap Glow */}
         {showGlow && (
           <>
-            <ellipse cx={-28} cy={bodyY + 95} rx="12" ry="16" fill="#10b981" opacity="0.6" filter="url(#muscleGlow)" />
-            <ellipse cx={28} cy={bodyY + 95} rx="12" ry="16" fill="#10b981" opacity="0.6" filter="url(#muscleGlow)" />
+            <ellipse cx={-kneeX / 2 - 4} cy={hipY + 28} rx="16" ry="22" fill="url(#primaryMuscleHeat)" filter="url(#muscleGlow)" opacity={0.6 + progress * 0.35} />
+            <ellipse cx={kneeX / 2 + 4} cy={hipY + 28} rx="16" ry="22" fill="url(#primaryMuscleHeat)" filter="url(#muscleGlow)" opacity={0.6 + progress * 0.35} />
           </>
         )}
 
-        <text x="0" y="235" fill={showMistake ? '#f43f5e' : '#10b981'} textAnchor="middle" fontSize="10" fontFamily="monospace" fontWeight="bold">
-          {showMistake ? '❌ Knee Cave-in (Valgus Strain)' : '✅ Knees Tracking Over 2nd & 3rd Toes'}
+        {/* Left Leg: Hip -> Knee -> Foot */}
+        <path
+          d={`M -18 ${hipY + 12} L -${kneeX} ${hipY + 42} L -${standWidth} 200`}
+          fill="none"
+          stroke="url(#limbGrad)"
+          strokeWidth="15"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <HumanSneaker x={-standWidth} y={200} facingLeft={true} theme={theme} scale={1.05} />
+
+        {/* Right Leg: Hip -> Knee -> Foot */}
+        <path
+          d={`M 18 ${hipY + 12} L ${kneeX} ${hipY + 42} L ${standWidth} 200`}
+          fill="none"
+          stroke="url(#limbGrad)"
+          strokeWidth="15"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <HumanSneaker x={standWidth} y={200} facingLeft={false} theme={theme} scale={1.05} />
+
+        {/* Knee Tracking Indicators */}
+        <text x="-90" y="195" fill={showMistake ? '#f43f5e' : '#10b981'} fontSize="11" fontFamily="sans-serif" fontWeight="bold">
+          {showMistake ? '❌ Valgus Knee Cave' : '✅ Knees Tracking Toes'}
         </text>
       </g>
     );
   }
 
-  // Side View (Kinematic Depth & Hip Hinge)
-  const ankleX = 180;
-  const ankleY = 198;
-  const kneeX = 162 - kneeForward;
-  const kneeY = 150 + (progress * 15);
-  const hipX = 205 + hipBack;
-  const hipY = 95 + hipDrop;
-  const shoulderX = 175 + (hipBack * 0.4);
-  const shoulderY = 48 + hipDrop;
-  const headX = 168 + (hipBack * 0.3);
-  const headY = 18 + hipDrop;
+  // Side View (High-Fidelity Squat Kinematics)
+  const hipX = 220 - (progress * 35);
+  const hipY = 120 + depth;
+  const kneeX = 180 + (progress * 12);
+  const kneeY = 158 + (progress * 18);
+  const footX = 175;
+  const footY = 200;
+
+  const shoulderX = hipX - 25 + (progress * torsoLean);
+  const shoulderY = hipY - 65;
+  const headX = shoulderX - 10;
+  const headY = shoulderY - 26;
+
+  const handX = shoulderX - 35;
+  const handY = shoulderY + 20;
 
   return (
     <g>
-      {/* Floor Line */}
-      <line x1="80" y1="208" x2="300" y2="208" stroke="#334155" strokeWidth="3" />
+      {/* Studio Floor & Dynamic Shadow */}
+      <line x1="80" y1="205" x2="320" y2="205" stroke="#475569" strokeWidth="2.5" opacity="0.6" />
+      <ellipse cx={hipX - 10} cy="207" rx={65} ry="10" fill="#000000" opacity="0.32" filter="url(#contactShadow)" />
 
-      {/* Far Arm extended forward for counterbalance */}
+      {/* Quadriceps & Glute Muscle Activation Glow */}
+      {showGlow && (
+        <>
+          {/* Gluteus Glow */}
+          <circle cx={hipX + 10} cy={hipY} r="22" fill="url(#primaryMuscleHeat)" filter="url(#muscleGlow)" opacity={0.6 + progress * 0.35} />
+          {/* Quad Glow */}
+          <ellipse cx={(hipX + kneeX) / 2} cy={(hipY + kneeY) / 2} rx="22" ry="14" fill="url(#primaryMuscleHeat)" filter="url(#muscleGlow)" opacity={0.6 + progress * 0.35} />
+        </>
+      )}
+
+      {/* Muscular Torso & Tank */}
       <path
-        d={`M ${shoulderX} ${shoulderY} L ${shoulderX - 45} ${shoulderY + 6}`}
-        fill="none"
-        stroke={theme.skinShadow}
-        strokeWidth="10"
-        strokeLinecap="round"
-        opacity="0.75"
-      />
-
-      {/* Head Profile */}
-      <HumanHeadSide
-        x={headX}
-        y={headY}
-        facingLeft={true}
-        scale={0.95}
-        theme={theme}
-        characterType={characterType}
-      />
-
-      {/* Muscular Torso with 45° Athletic Hip Hinge */}
-      <path
-        d={`M ${shoulderX} ${shoulderY} C ${shoulderX + 15} ${shoulderY + 20}, ${hipX - 10} ${hipY - 15}, ${hipX} ${hipY}`}
+        d={`M ${shoulderX} ${shoulderY} C ${shoulderX + 5} ${shoulderY + 25}, ${hipX - 10} ${hipY - 25}, ${hipX} ${hipY}`}
         fill="none"
         stroke="url(#tankGrad)"
         strokeWidth="24"
         strokeLinecap="round"
       />
 
-      {/* Near Arm extended */}
+      {/* Athletic Shorts */}
       <path
-        d={`M ${shoulderX} ${shoulderY} L ${shoulderX - 52} ${shoulderY + 8}`}
-        fill="none"
-        stroke="url(#skinGrad)"
-        strokeWidth="11"
-        strokeLinecap="round"
-      />
-      <HumanHand x={shoulderX - 52} y={shoulderY + 8} grip={false} theme={theme} scale={1.05} />
-
-      {/* Glutes & Thigh (Femur with Vastus Lateralis muscle contour) */}
-      <path
-        d={`M ${hipX} ${hipY} C ${hipX - 15} ${hipY + 12}, ${kneeX + 15} ${kneeY + 4}, ${kneeX} ${kneeY}`}
+        d={`M ${hipX} ${hipY} C ${hipX - 10} ${hipY + 15}, ${kneeX + 15} ${kneeY - 10}, ${kneeX} ${kneeY}`}
         fill="none"
         stroke="url(#shortsGrad)"
-        strokeWidth="22"
+        strokeWidth="20"
         strokeLinecap="round"
       />
-
-      {/* Shin & Gastrocnemius Calf */}
+      {/* Shorts Stripe */}
       <path
-        d={`M ${kneeX} ${kneeY} C ${kneeX + 18} ${kneeY + 18}, ${ankleX - 6} ${ankleY - 12}, ${ankleX} ${ankleY}`}
+        d={`M ${hipX + 4} ${hipY} Q ${hipX - 2} ${hipY + 12} ${kneeX + 8} ${kneeY - 4}`}
         fill="none"
-        stroke="url(#skinGrad)"
+        stroke={theme.shortsAccent}
+        strokeWidth="2"
+      />
+
+      {/* Lower Leg (Shin & Sculpted Calf) */}
+      <path
+        d={`M ${kneeX} ${kneeY} C ${kneeX - 2} ${kneeY + 20}, ${footX + 5} ${footY - 15}, ${footX} ${footY}`}
+        fill="none"
+        stroke="url(#limbGrad)"
         strokeWidth="15"
         strokeLinecap="round"
       />
 
-      {/* Planted Athletic Sneaker with flat heel */}
-      <HumanSneaker x={ankleX} y={ankleY} facingLeft={true} angle={0} theme={theme} scale={1.15} />
+      {/* Sneaker Flat on Floor */}
+      <HumanSneaker x={footX} y={footY} facingLeft={true} theme={theme} scale={1.05} />
 
-      {/* Glute & Quad Muscle Glow */}
-      {showGlow && (
-        <>
-          <circle cx={hipX - 8} cy={hipY} r="18" fill="#10b981" opacity="0.65" filter="url(#muscleGlow)" />
-          <circle cx={(hipX + kneeX) / 2} cy={(hipY + kneeY) / 2} r="16" fill="#14b8a6" opacity="0.6" filter="url(#muscleGlow)" />
-        </>
-      )}
+      {/* Counterbalance Arms: Shoulder -> Elbow -> Hands */}
+      <path
+        d={`M ${shoulderX} ${shoulderY} L ${shoulderX - 20} ${shoulderY + 12} L ${handX} ${handY}`}
+        fill="none"
+        stroke="url(#limbGrad)"
+        strokeWidth="13"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <HumanHand x={handX} y={handY} grip={true} theme={theme} scale={1.1} />
 
-      {/* Articulations */}
-      <circle cx={shoulderX} cy={shoulderY} r="4.5" fill={theme.joints} />
-      <circle cx={hipX} cy={hipY} r="4.5" fill={theme.joints} />
-      <circle cx={kneeX} cy={kneeY} r="4.5" fill={theme.joints} />
-      <circle cx={ankleX} cy={ankleY} r="4.5" fill={theme.joints} />
+      {/* Head Profile */}
+      <HumanHeadSide x={headX} y={headY} facingLeft={true} scale={0.92} theme={theme} characterType={characterType} />
 
-      {/* Depth Indicator Annotation */}
-      <text x="240" y={hipY - 10} fill="#38bdf8" fontSize="10" fontFamily="monospace" fontWeight="bold">
-        {progress > 0.65 ? '🎯 Thighs Parallel (90°)' : 'Hips Hinging Back'}
+      {/* 90° Squat Depth Angle Telemetry Gauge */}
+      <path
+        d={`M ${hipX} ${hipY} L ${kneeX} ${kneeY} L ${footX} ${footY}`}
+        stroke={showMistake ? '#f43f5e' : '#10b981'}
+        strokeWidth="2"
+        strokeDasharray="4 3"
+        fill="none"
+      />
+      <text x={kneeX + 25} y={kneeY - 10} fill={showMistake ? '#f43f5e' : '#10b981'} fontSize="11" fontFamily="sans-serif" fontWeight="bold">
+        {progress > 0.75 ? '90° Thigh Parallel ✅' : 'Controlled Descent'}
       </text>
     </g>
   );
 };
 
 /* =========================================================================
-   3. PLANK HOLD KINEMATIC MODEL
+   3. PLANK & CORE KINEMATIC MODEL
 ========================================================================= */
 export const PlankCharacter: React.FC<KinematicProps> = ({
   progress,
+  viewAngle,
   theme,
   characterType,
   showMistake,
   showGlow
 }) => {
-  const sag = showMistake ? Math.sin(progress * Math.PI) * 22 : 0;
+  const breath = Math.sin(progress * Math.PI * 2) * 2;
+  const mistakeSag = showMistake ? 22 : 0;
+
+  const headX = 100;
+  const headY = 125;
+  const shoulderX = 135;
+  const shoulderY = 135;
+  const hipX = 225;
+  const hipY = 145 + mistakeSag + breath;
+  const footX = 330;
+  const footY = 195;
+
+  const elbowX = 135;
+  const elbowY = 195;
+  const handX = 105;
+  const handY = 195;
+
   return (
-    <g transform="translate(25, 20)">
-      {/* Floor */}
-      <line x1="30" y1="185" x2="330" y2="185" stroke="#334155" strokeWidth="3" />
+    <g>
+      {/* Studio Floor */}
+      <line x1="50" y1="195" x2="370" y2="195" stroke="#475569" strokeWidth="2.5" opacity="0.6" />
+      <ellipse cx="220" cy="197" rx="125" ry="10" fill="#000000" opacity="0.32" filter="url(#contactShadow)" />
 
-      {/* Forearms planted on ground */}
-      <line x1="105" y1="185" x2="140" y2="185" stroke="url(#skinGrad)" strokeWidth="12" strokeLinecap="round" />
-      <line x1="105" y1="185" x2="105" y2="135" stroke="url(#skinGrad)" strokeWidth="13" strokeLinecap="round" />
+      {/* Core Muscle Heatmap Activation Glow */}
+      {showGlow && (
+        <ellipse cx="180" cy={140 + mistakeSag} rx="35" ry="16" fill="url(#primaryMuscleHeat)" filter="url(#muscleGlow)" opacity="0.8" />
+      )}
 
-      {/* Head */}
-      <HumanHeadSide
-        x={72}
-        y={118}
-        facingLeft={true}
-        scale={0.9}
-        theme={theme}
-        characterType={characterType}
-      />
-
-      {/* Torso with 360 abdominal brace */}
+      {/* Legs */}
       <path
-        d={`M 105 135 C 160 ${140 + sag}, 200 ${142 + sag}, 235 ${145 + sag}`}
+        d={`M ${hipX} ${hipY} L 275 168 L ${footX} ${footY}`}
+        fill="none"
+        stroke="url(#shortsGrad)"
+        strokeWidth="18"
+        strokeLinecap="round"
+      />
+      <path
+        d={`M 275 168 L ${footX} ${footY}`}
+        fill="none"
+        stroke="url(#limbGrad)"
+        strokeWidth="14"
+        strokeLinecap="round"
+      />
+      <HumanSneaker x={footX} y={footY} facingLeft={true} angle={18} theme={theme} scale={1.05} />
+
+      {/* Torso */}
+      <path
+        d={`M ${shoulderX} ${shoulderY} C 165 ${138 + mistakeSag}, 195 ${142 + mistakeSag}, ${hipX} ${hipY}`}
         fill="none"
         stroke={showMistake ? 'url(#mistakeGrad)' : 'url(#tankGrad)'}
         strokeWidth="24"
         strokeLinecap="round"
       />
 
-      {/* Legs & Glutes */}
+      {/* Forearm Plank Support: Shoulder -> Elbow -> Grounded Forearm */}
+      <ellipse cx={shoulderX} cy={shoulderY} rx="10" ry="9" fill="url(#skinGrad)" stroke={theme.skinDeepShadow} strokeWidth="0.8" />
       <path
-        d={`M 235 ${145 + sag} L 305 175`}
+        d={`M ${shoulderX} ${shoulderY} L ${elbowX} ${elbowY} L ${handX} ${handY}`}
         fill="none"
-        stroke="url(#shortsGrad)"
-        strokeWidth="18"
+        stroke="url(#limbGrad)"
+        strokeWidth="14"
         strokeLinecap="round"
+        strokeLinejoin="round"
       />
-      <HumanSneaker x={305} y={175} facingLeft={true} angle={20} theme={theme} scale={1.05} />
+      <HumanHand x={handX} y={handY} grip={true} theme={theme} scale={1.1} hasWatch={true} />
 
-      {/* Core Muscle Activation Glow */}
-      {showGlow && (
-        <ellipse cx="170" cy={140 + sag} rx="30" ry="14" fill="#10b981" opacity="0.7" filter="url(#muscleGlow)" />
-      )}
+      {/* Head Profile */}
+      <HumanHeadSide x={headX} y={headY} facingLeft={true} scale={0.92} theme={theme} characterType={characterType} />
 
-      {/* Laser spine alignment */}
-      <line x1="72" y1="125" x2="305" y2="175" stroke={showMistake ? '#f43f5e' : '#10b981'} strokeWidth="1.5" strokeDasharray="4 3" />
-      <text x="175" y={sag > 5 ? 180 : 95} fill={showMistake ? '#f43f5e' : '#10b981'} textAnchor="middle" fontSize="10" fontFamily="monospace" fontWeight="bold">
-        {showMistake ? '❌ Hip Sagging / Lumbar Strain' : '✅ 360° Core Tension & Posterior Pelvic Tilt'}
+      {/* Laser Alignment Line */}
+      <line x1={headX - 10} y1={headY + 15} x2={footX + 10} y2={footY} stroke={showMistake ? '#f43f5e' : '#10b981'} strokeWidth="1.8" strokeDasharray="5 3" />
+      <text x="170" y="85" fill={showMistake ? '#f43f5e' : '#10b981'} fontSize="11" fontFamily="sans-serif" fontWeight="bold">
+        {showMistake ? '❌ Hip Sagging / Inactive Core' : '✅ 360° Cylindrical Core Brace'}
       </text>
     </g>
   );
 };
 
 /* =========================================================================
-   4. WALKING / STATIC LUNGE KINEMATIC MODEL
+   4. LUNGE KINEMATIC MODEL
 ========================================================================= */
 export const LungeCharacter: React.FC<KinematicProps> = ({
   progress,
   theme,
   characterType,
+  showMistake,
   showGlow
 }) => {
-  const drop = progress * 42;
+  const depth = progress * 40;
+  const hipY = 120 + depth;
+  const frontKneeX = 145;
+  const frontKneeY = 160 + depth;
+  const frontFootX = 145;
+  const frontFootY = 200;
+
+  const backKneeX = 235;
+  const backKneeY = 165 + depth;
+  const backFootX = 275;
+  const backFootY = 195;
+
+  const shoulderX = 190;
+  const shoulderY = hipY - 65;
+  const headX = shoulderX - 5;
+  const headY = shoulderY - 26;
+
   return (
-    <g transform="translate(100, 15)">
-      {/* Floor */}
-      <line x1="-10" y1="210" x2="250" y2="210" stroke="#334155" strokeWidth="3" />
+    <g>
+      {/* Studio Floor */}
+      <line x1="80" y1="205" x2="320" y2="205" stroke="#475569" strokeWidth="2.5" opacity="0.6" />
+      <ellipse cx="205" cy="207" rx="80" ry="10" fill="#000000" opacity="0.32" filter="url(#contactShadow)" />
 
-      {/* Head */}
-      <HumanHeadSide
-        x={120}
-        y={28 + drop}
-        facingLeft={true}
-        scale={0.95}
-        theme={theme}
-        characterType={characterType}
-      />
+      {/* Muscle Heatmap */}
+      {showGlow && (
+        <ellipse cx={frontKneeX + 15} cy={frontKneeY - 10} rx="18" ry="24" fill="url(#primaryMuscleHeat)" filter="url(#muscleGlow)" opacity={0.7 + progress * 0.25} />
+      )}
 
-      {/* Upright Muscular Torso */}
+      {/* Back Leg (Trailing) */}
       <path
-        d={`M 120 ${50 + drop} L 120 ${110 + drop}`}
-        fill="none"
-        stroke="url(#tankGrad)"
-        strokeWidth="24"
-        strokeLinecap="round"
-      />
-
-      {/* Front Leg (90° Knee Angle) */}
-      <path
-        d={`M 115 ${110 + drop} L 75 ${145 + drop} L 75 200`}
+        d={`M 195 ${hipY} L ${backKneeX} ${backKneeY} L ${backFootX} ${backFootY}`}
         fill="none"
         stroke="url(#shortsGrad)"
         strokeWidth="18"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <HumanSneaker x={75} y={204} facingLeft={true} angle={0} theme={theme} scale={1.1} />
+      <HumanSneaker x={backFootX} y={backFootY} facingLeft={true} angle={25} theme={theme} scale={0.95} />
 
-      {/* Back Leg (Dropping knee towards floor) */}
+      {/* Muscular Torso */}
       <path
-        d={`M 125 ${110 + drop} L 175 ${160 + drop} L 205 200`}
+        d={`M ${shoulderX} ${shoulderY} C ${shoulderX} ${shoulderY + 25}, 190 ${hipY - 25}, 190 ${hipY}`}
+        fill="none"
+        stroke="url(#tankGrad)"
+        strokeWidth="24"
+        strokeLinecap="round"
+      />
+
+      {/* Front Leg (Leading) */}
+      <path
+        d={`M 190 ${hipY} L ${frontKneeX} ${frontKneeY} L ${frontFootX} ${frontFootY}`}
         fill="none"
         stroke="url(#shortsGrad)"
-        strokeWidth="17"
+        strokeWidth="20"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <HumanSneaker x={205} y={200} facingLeft={true} angle={25} theme={theme} scale={1.05} />
+      <path
+        d={`M ${frontKneeX} ${frontKneeY} L ${frontFootX} ${frontFootY}`}
+        fill="none"
+        stroke="url(#limbGrad)"
+        strokeWidth="15"
+        strokeLinecap="round"
+      />
+      <HumanSneaker x={frontFootX} y={frontFootY} facingLeft={true} theme={theme} scale={1.05} />
 
-      {/* Quad Muscle Glow */}
-      {showGlow && (
-        <circle cx="95" cy={135 + drop} r="16" fill="#10b981" opacity="0.65" filter="url(#muscleGlow)" />
-      )}
+      {/* Hands on Hips */}
+      <path
+        d={`M ${shoulderX} ${shoulderY} L ${shoulderX - 18} ${shoulderY + 28} L 186 ${hipY - 8}`}
+        fill="none"
+        stroke="url(#limbGrad)"
+        strokeWidth="13"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <HumanHand x={186} y={hipY - 8} grip={true} theme={theme} scale={1.1} />
 
-      <text x="120" y="230" fill="#10b981" textAnchor="middle" fontSize="10" fontFamily="monospace" fontWeight="bold">
-        ✅ Stacked 90° Knee & Torso Perpendicular to Floor
+      {/* Head */}
+      <HumanHeadSide x={headX} y={headY} facingLeft={true} scale={0.92} theme={theme} characterType={characterType} />
+
+      <text x="140" y="80" fill="#10b981" fontSize="11" fontFamily="sans-serif" fontWeight="bold">
+        ✅ 90° / 90° Dual Knee Geometry
       </text>
     </g>
   );
@@ -570,51 +636,62 @@ export const GluteBridgeCharacter: React.FC<KinematicProps> = ({
   showGlow
 }) => {
   const lift = progress * 42;
-  return (
-    <g transform="translate(60, 20)">
-      {/* Floor */}
-      <line x1="10" y1="192" x2="280" y2="192" stroke="#334155" strokeWidth="3" />
+  const shoulderX = 110;
+  const shoulderY = 190;
+  const hipX = 185;
+  const hipY = 190 - lift;
+  const kneeX = 250;
+  const kneeY = 145 - (lift * 0.2);
+  const footX = 265;
+  const footY = 195;
 
-      {/* Head on floor */}
-      <HumanHeadSide
-        x={60}
-        y={165}
-        facingLeft={false}
-        scale={0.9}
-        theme={theme}
-        characterType={characterType}
-      />
+  return (
+    <g>
+      {/* Studio Floor */}
+      <line x1="50" y1="195" x2="350" y2="195" stroke="#475569" strokeWidth="2.5" opacity="0.6" />
+
+      {/* Glute Activation Glow */}
+      {showGlow && (
+        <circle cx={hipX} cy={hipY} r="24" fill="url(#primaryMuscleHeat)" filter="url(#muscleGlow)" opacity={0.6 + progress * 0.35} />
+      )}
+
+      {/* Head on Floor */}
+      <HumanHeadSide x={85} y={185} facingLeft={false} scale={0.92} theme={theme} characterType={characterType} />
 
       {/* Grounded Arms */}
-      <line x1="85" y1="182" x2="130" y2="182" stroke="url(#skinGrad)" strokeWidth="11" strokeLinecap="round" />
+      <path d={`M ${shoulderX} ${shoulderY} L 160 195 L 180 195`} fill="none" stroke="url(#limbGrad)" strokeWidth="13" strokeLinecap="round" />
+      <HumanHand x={180} y={195} grip={false} theme={theme} scale={1.1} />
 
-      {/* Elevated Torso & Spine */}
+      {/* Torso Bridge Line */}
       <path
-        d={`M 85 172 Q 135 ${160 - lift} 175 ${160 - lift}`}
+        d={`M ${shoulderX} ${shoulderY} L ${hipX} ${hipY}`}
         fill="none"
         stroke="url(#tankGrad)"
         strokeWidth="24"
         strokeLinecap="round"
       />
 
-      {/* Glutes & Thigh */}
+      {/* Thighs & Glutes */}
       <path
-        d={`M 175 ${160 - lift} L 225 ${145 - lift * 0.4} L 225 186`}
+        d={`M ${hipX} ${hipY} L ${kneeX} ${kneeY}`}
         fill="none"
         stroke="url(#shortsGrad)"
-        strokeWidth="18"
+        strokeWidth="20"
         strokeLinecap="round"
-        strokeLinejoin="round"
       />
-      <HumanSneaker x={225} y={188} facingLeft={true} angle={0} theme={theme} scale={1.1} />
 
-      {/* Glute Muscle Peak Contraction Glow */}
-      {showGlow && (
-        <circle cx="165" cy={160 - lift} r="18" fill="#10b981" opacity="0.75" filter="url(#muscleGlow)" />
-      )}
+      {/* Calves to Ground */}
+      <path
+        d={`M ${kneeX} ${kneeY} L ${footX} ${footY}`}
+        fill="none"
+        stroke="url(#limbGrad)"
+        strokeWidth="15"
+        strokeLinecap="round"
+      />
+      <HumanSneaker x={footX} y={footY} facingLeft={true} theme={theme} scale={1.05} />
 
-      <text x="150" y={105 - lift} fill="#10b981" textAnchor="middle" fontSize="10" fontFamily="monospace" fontWeight="bold">
-        {progress > 0.7 ? '🔥 Maximum Glute Contraction at Apex' : 'Drive Through Heels'}
+      <text x="135" y="90" fill="#10b981" fontSize="11" fontFamily="sans-serif" fontWeight="bold">
+        ✅ Posterior Chain Apex Squeeze
       </text>
     </g>
   );
@@ -629,55 +706,75 @@ export const ChairDipCharacter: React.FC<KinematicProps> = ({
   characterType,
   showGlow
 }) => {
-  const drop = progress * 42;
-  return (
-    <g transform="translate(80, 15)">
-      {/* Heavy Bench/Chair Structure */}
-      <rect x="45" y="110" width="45" height="90" rx="4" fill="#1e293b" stroke="#334155" strokeWidth="2" />
-      <rect x="40" y="108" width="55" height="12" rx="3" fill="#334155" />
+  const yDrop = progress * 38;
+  const shoulderX = 145;
+  const shoulderY = 120 + yDrop;
+  const hipX = 160;
+  const hipY = 150 + yDrop;
+  const kneeX = 210;
+  const kneeY = 155 + yDrop;
+  const footX = 250;
+  const footY = 200;
 
-      {/* Head */}
-      <HumanHeadSide
-        x={115}
-        y={55 + drop}
-        facingLeft={false}
-        scale={0.9}
-        theme={theme}
-        characterType={characterType}
-      />
+  const benchX = 110;
+  const elbowX = 125;
+  const elbowY = 135 + (progress * 15);
+
+  return (
+    <g>
+      {/* Studio Floor & Bench */}
+      <line x1="60" y1="205" x2="340" y2="205" stroke="#475569" strokeWidth="2.5" opacity="0.6" />
+      {/* Sturdy Training Bench */}
+      <rect x={benchX - 25} y={150} width="50" height="55" rx="4" fill="#1e293b" stroke="#334155" strokeWidth="1.5" />
+
+      {/* Triceps Activation Glow */}
+      {showGlow && (
+        <circle cx={elbowX} cy={elbowY} r="18" fill="url(#primaryMuscleHeat)" filter="url(#muscleGlow)" opacity={0.7 + progress * 0.25} />
+      )}
 
       {/* Torso */}
-      <rect x="104" y={75 + drop} width="24" height="60" rx="10" fill="url(#tankGrad)" stroke="#0f172a" strokeWidth="1" />
-
-      {/* Tricep Arm Flex */}
       <path
-        d={`M 112 ${85 + drop} L 85 ${95 + drop * 0.5} L 85 112`}
+        d={`M ${shoulderX} ${shoulderY} L ${hipX} ${hipY}`}
         fill="none"
-        stroke="url(#skinGrad)"
+        stroke="url(#tankGrad)"
+        strokeWidth="24"
+        strokeLinecap="round"
+      />
+
+      {/* Legs */}
+      <path
+        d={`M ${hipX} ${hipY} L ${kneeX} ${kneeY} L ${footX} ${footY}`}
+        fill="none"
+        stroke="url(#shortsGrad)"
+        strokeWidth="18"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <HumanSneaker x={footX} y={footY} facingLeft={true} theme={theme} scale={1.05} />
+
+      {/* Arms Braced on Bench: Shoulder -> Elbow -> Hand on Bench Edge */}
+      <path
+        d={`M ${shoulderX} ${shoulderY} L ${elbowX} ${elbowY} L ${benchX + 22} 150`}
+        fill="none"
+        stroke="url(#limbGrad)"
         strokeWidth="13"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <HumanHand x={85} y={112} grip={true} theme={theme} scale={1.1} />
+      <HumanHand x={benchX + 22} y={150} grip={true} theme={theme} scale={1.1} />
 
-      {/* Tricep Glow */}
-      {showGlow && (
-        <circle cx="95" cy={95 + drop * 0.5} r="14" fill="#10b981" opacity="0.7" filter="url(#muscleGlow)" />
-      )}
+      {/* Head */}
+      <HumanHeadSide x={shoulderX} y={shoulderY - 26} facingLeft={true} scale={0.92} theme={theme} characterType={characterType} />
 
-      {/* Legs Extended Forward */}
-      <path d={`M 116 ${135 + drop} L 165 175 L 195 198`} fill="none" stroke="url(#shortsGrad)" strokeWidth="17" strokeLinecap="round" />
-      <HumanSneaker x={195} y={198} facingLeft={false} angle={-15} theme={theme} scale={1.1} />
-
-      <text x="140" y="224" fill="#10b981" textAnchor="middle" fontSize="10" fontFamily="monospace" fontWeight="bold">
-        ✅ 90° Elbow Flexion & Spine Gliding Close to Bench
+      <text x="140" y="70" fill="#10b981" fontSize="11" fontFamily="sans-serif" fontWeight="bold">
+        ✅ 90° Tricep Lock & Open Chest
       </text>
     </g>
   );
 };
 
 /* =========================================================================
-   7. DUMBBELL ROW KINEMATIC MODEL
+   7. DUMBBELL / BACK ROW KINEMATIC MODEL
 ========================================================================= */
 export const DumbbellRowCharacter: React.FC<KinematicProps> = ({
   progress,
@@ -685,60 +782,73 @@ export const DumbbellRowCharacter: React.FC<KinematicProps> = ({
   characterType,
   showGlow
 }) => {
-  const pull = progress * 38;
+  const pull = progress * 36;
+  const shoulderX = 145;
+  const shoulderY = 125;
+  const hipX = 220;
+  const hipY = 140;
+  const kneeX = 230;
+  const kneeY = 175;
+  const footX = 235;
+  const footY = 205;
+
+  const elbowX = 165 + (progress * 15);
+  const elbowY = 160 - pull;
+  const handX = 155;
+  const handY = 195 - pull;
+
   return (
-    <g transform="translate(90, 15)">
-      {/* Floor */}
-      <line x1="10" y1="212" x2="250" y2="212" stroke="#334155" strokeWidth="3" />
+    <g>
+      {/* Studio Floor */}
+      <line x1="80" y1="205" x2="320" y2="205" stroke="#475569" strokeWidth="2.5" opacity="0.6" />
 
-      {/* Head at 45° angle */}
-      <HumanHeadSide
-        x={85}
-        y={60}
-        facingLeft={true}
-        scale={0.9}
-        theme={theme}
-        characterType={characterType}
-      />
+      {/* Latissimus Dorsi Back Glow */}
+      {showGlow && (
+        <ellipse cx="180" cy="130" rx="26" ry="14" fill="url(#primaryMuscleHeat)" filter="url(#muscleGlow)" opacity={0.6 + progress * 0.35} />
+      )}
 
-      {/* 45° Hinged Torso */}
+      {/* Legs (Hinged at hips) */}
       <path
-        d="M 98 75 L 165 120"
+        d={`M ${hipX} ${hipY} L ${kneeX} ${kneeY} L ${footX} ${footY}`}
+        fill="none"
+        stroke="url(#shortsGrad)"
+        strokeWidth="19"
+        strokeLinecap="round"
+      />
+      <HumanSneaker x={footX} y={footY} facingLeft={true} theme={theme} scale={1.05} />
+
+      {/* Torso Hinged at 45° */}
+      <path
+        d={`M ${shoulderX} ${shoulderY} L ${hipX} ${hipY}`}
         fill="none"
         stroke="url(#tankGrad)"
         strokeWidth="24"
         strokeLinecap="round"
       />
 
-      {/* Row Arm kinematics (Pulling elbow to hip crease) */}
+      {/* Rowing Arm: Shoulder -> Elbow -> Hand gripping dumbbell */}
       <path
-        d={`M 115 85 L ${145 + pull * 0.4} ${138 - pull} L ${132 + pull * 0.3} ${170 - pull}`}
+        d={`M ${shoulderX} ${shoulderY} L ${elbowX} ${elbowY} L ${handX} ${handY}`}
         fill="none"
-        stroke="url(#skinGrad)"
+        stroke="url(#limbGrad)"
         strokeWidth="13"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <HumanHand x={132 + pull * 0.3} y={170 - pull} grip={true} theme={theme} scale={1.1} />
+      <HumanHand x={handX} y={handY} grip={true} theme={theme} scale={1.1} />
 
-      {/* Metallic Dumbbell */}
-      <g transform={`translate(${118 + pull * 0.3}, ${164 - pull})`}>
-        <rect x="0" y="0" width="30" height="12" rx="4" fill="#38bdf8" stroke="#0284c7" strokeWidth="1" />
-        <circle cx="0" cy="6" r="8" fill="#0284c7" />
-        <circle cx="30" cy="6" r="8" fill="#0284c7" />
+      {/* Ergonomic Cast Iron Dumbbell */}
+      <g transform={`translate(${handX}, ${handY})`}>
+        <rect x="-14" y="-3" width="28" height="6" rx="2" fill="#334155" />
+        <rect x="-18" y="-9" width="8" height="18" rx="2" fill="#0f172a" stroke="#475569" strokeWidth="1" />
+        <rect x="10" y="-9" width="8" height="18" rx="2" fill="#0f172a" stroke="#475569" strokeWidth="1" />
       </g>
 
-      {/* Latissimus Dorsi Back Glow */}
-      {showGlow && (
-        <circle cx="138" cy="98" r="18" fill="#10b981" opacity="0.75" filter="url(#muscleGlow)" />
-      )}
+      {/* Head */}
+      <HumanHeadSide x={shoulderX - 10} y={shoulderY - 24} facingLeft={true} scale={0.92} theme={theme} characterType={characterType} />
 
-      {/* Athletic Bent Knees Base */}
-      <path d="M 165 120 L 175 160 L 180 206" fill="none" stroke="url(#shortsGrad)" strokeWidth="17" strokeLinecap="round" strokeLinejoin="round" />
-      <HumanSneaker x={180} y={208} facingLeft={true} angle={0} theme={theme} scale={1.15} />
-
-      <text x="140" y="40" fill="#10b981" textAnchor="middle" fontSize="10" fontFamily="monospace" fontWeight="bold">
-        {progress > 0.7 ? '🔥 Squeeze Rhomboid & Lat Blade at Top' : 'Pull Elbow Tight to Hip Pocket'}
+      <text x="135" y="80" fill="#10b981" fontSize="11" fontFamily="sans-serif" fontWeight="bold">
+        ✅ Scapular Retraction & Elbow Drive
       </text>
     </g>
   );
@@ -753,54 +863,67 @@ export const MountainClimberCharacter: React.FC<KinematicProps> = ({
   characterType,
   showGlow
 }) => {
-  const kneeDrive = Math.sin(progress * Math.PI * 2) * 38;
+  const kneeDrive = Math.sin(progress * Math.PI * 2);
+  const activeKneeX = 190 - (kneeDrive * 40);
+  const activeKneeY = 175 - (Math.abs(kneeDrive) * 20);
+
+  const headX = 95;
+  const headY = 115;
+  const shoulderX = 130;
+  const shoulderY = 125;
+  const hipX = 220;
+  const hipY = 140;
+
   return (
-    <g transform="translate(60, 20)">
-      {/* Floor */}
-      <line x1="20" y1="190" x2="270" y2="190" stroke="#334155" strokeWidth="3" />
+    <g>
+      {/* Studio Floor */}
+      <line x1="50" y1="205" x2="370" y2="205" stroke="#475569" strokeWidth="2.5" opacity="0.6" />
 
-      {/* Head */}
-      <HumanHeadSide
-        x={65}
-        y={105}
-        facingLeft={true}
-        scale={0.9}
-        theme={theme}
-        characterType={characterType}
-      />
+      {/* Core Glow */}
+      {showGlow && (
+        <ellipse cx="175" cy="140" rx="30" ry="16" fill="url(#primaryMuscleHeat)" filter="url(#muscleGlow)" opacity="0.75" />
+      )}
 
-      {/* Grounded Plank Arms */}
-      <line x1="85" y1="120" x2="85" y2="185" stroke="url(#skinGrad)" strokeWidth="13" strokeLinecap="round" />
-      <HumanHand x={85} y={185} grip={false} theme={theme} scale={1.15} />
+      {/* Back Extended Leg */}
+      <path d={`M ${hipX} ${hipY} L 275 168 L 330 195`} fill="none" stroke="url(#shortsGrad)" strokeWidth="18" strokeLinecap="round" />
+      <HumanSneaker x={330} y={195} facingLeft={true} angle={18} theme={theme} scale={1.0} />
 
-      {/* Flat Torso */}
-      <line x1="85" y1="120" x2="190" y2="140" stroke="url(#tankGrad)" strokeWidth="24" strokeLinecap="round" />
-
-      {/* Driving Leg 1 (Dynamic Sprinting Cadence) */}
+      {/* Dynamic Driving Leg (Cycling knee to chest) */}
       <path
-        d={`M 190 140 L ${140 - kneeDrive} 160 L ${195 - kneeDrive} 185`}
+        d={`M ${hipX} ${hipY} L ${activeKneeX} ${activeKneeY} L ${activeKneeX + 30} 190`}
         fill="none"
         stroke="url(#shortsGrad)"
-        strokeWidth="17"
+        strokeWidth="19"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <HumanSneaker x={195 - kneeDrive} y={185} facingLeft={true} angle={15} theme={theme} scale={1.05} />
+      <HumanSneaker x={activeKneeX + 30} y={190} facingLeft={true} theme={theme} scale={1.05} />
 
-      {/* Core Activation Glow */}
-      {showGlow && (
-        <circle cx="140" cy="135" r="18" fill="#10b981" opacity="0.65" filter="url(#muscleGlow)" />
-      )}
+      {/* Torso */}
+      <path
+        d={`M ${shoulderX} ${shoulderY} L ${hipX} ${hipY}`}
+        fill="none"
+        stroke="url(#tankGrad)"
+        strokeWidth="24"
+        strokeLinecap="round"
+      />
 
-      <text x="140" y="80" fill="#10b981" textAnchor="middle" fontSize="10" fontFamily="monospace" fontWeight="bold">
-        ⚡ Explosive Knee Drive & Locked Core Line
+      {/* Straight Support Arms */}
+      <path d={`M ${shoulderX} ${shoulderY} L 130 205`} fill="none" stroke="url(#limbGrad)" strokeWidth="14" strokeLinecap="round" />
+      <HumanHand x={130} y={205} grip={false} theme={theme} scale={1.2} />
+
+      {/* Head */}
+      <HumanHeadSide x={headX} y={headY} facingLeft={true} scale={0.92} theme={theme} characterType={characterType} />
+
+      <text x="140" y="75" fill="#10b981" fontSize="11" fontFamily="sans-serif" fontWeight="bold">
+        ✅ Explosive Knee Drive & Stable Hips
       </text>
     </g>
   );
 };
 
 /* =========================================================================
-   9. RESISTANCE BAND / LAT PULLDOWN KINEMATIC MODEL
+   9. LAT PULLDOWN / PULL-APART KINEMATIC MODEL
 ========================================================================= */
 export const LatPulldownCharacter: React.FC<KinematicProps> = ({
   progress,
@@ -808,77 +931,68 @@ export const LatPulldownCharacter: React.FC<KinematicProps> = ({
   characterType,
   showGlow
 }) => {
-  const pullDown = progress * 38;
-  return (
-    <g transform="translate(200, 20)">
-      {/* Head */}
-      <HumanHeadFront
-        x={0}
-        y={40}
-        scale={0.95}
-        theme={theme}
-        characterType={characterType}
-      />
+  const pull = progress * 40;
+  const elbowY = 95 + pull;
+  const handY = 70 + pull;
 
-      {/* Torso */}
+  return (
+    <g transform="translate(200, 0)">
+      {/* Studio Floor */}
+      <line x1="-120" y1="205" x2="120" y2="205" stroke="#475569" strokeWidth="2.5" opacity="0.6" />
+
+      {/* Lats Activation Glow */}
+      {showGlow && (
+        <ellipse cx="0" cy="115" rx="38" ry="20" fill="url(#primaryMuscleHeat)" filter="url(#muscleGlow)" opacity={0.6 + progress * 0.35} />
+      )}
+
+      {/* Head Front */}
+      <HumanHeadFront x={0} y={65} scale={0.92} theme={theme} characterType={characterType} />
+
+      {/* Muscular Torso & V-Taper Back */}
       <path
-        d="M -26 65 C -30 90, -22 115, -18 130 L 18 130 C 22 115, 30 90, 26 65 Z"
+        d="M -30 90 C -34 125, -24 150, -20 165 L 20 165 C 24 150, 34 125, 30 90 Z"
         fill="url(#tankGrad)"
         stroke="#0f172a"
         strokeWidth="1.2"
       />
 
-      {/* Left Arm pulling band apart */}
+      {/* Athletic Shorts & Seated Stance */}
+      <path d="M -22 165 L -34 200 L 34 200 L 22 165 Z" fill="url(#shortsGrad)" stroke="#0f172a" strokeWidth="1.2" />
+
+      {/* Resistance Band / Bar Overhead */}
+      <line x1="-70" y1={handY} x2="70" y2={handY} stroke="#f59e0b" strokeWidth="4" strokeLinecap="round" />
+
+      {/* Left Arm Pull: Shoulder -> Flare Elbow -> Hand */}
       <path
-        d={`M -24 70 Q ${-55 - pullDown * 0.4} ${45 + pullDown} ${-65 - pullDown} ${30 + pullDown}`}
+        d={`M -28 92 L -52 ${elbowY} L -45 ${handY}`}
         fill="none"
-        stroke="url(#skinGrad)"
+        stroke="url(#limbGrad)"
         strokeWidth="13"
         strokeLinecap="round"
+        strokeLinejoin="round"
       />
-      <HumanHand x={-65 - pullDown} y={30 + pullDown} grip={true} theme={theme} scale={1.1} />
+      <HumanHand x={-45} y={handY} grip={true} theme={theme} scale={1.1} />
 
-      {/* Right Arm pulling band apart */}
+      {/* Right Arm Pull: Shoulder -> Flare Elbow -> Hand */}
       <path
-        d={`M 24 70 Q ${55 + pullDown * 0.4} ${45 + pullDown} ${65 + pullDown} ${30 + pullDown}`}
+        d={`M 28 92 L 52 ${elbowY} L 45 ${handY}`}
         fill="none"
-        stroke="url(#skinGrad)"
+        stroke="url(#limbGrad)"
         strokeWidth="13"
         strokeLinecap="round"
+        strokeLinejoin="round"
       />
-      <HumanHand x={65 + pullDown} y={30 + pullDown} grip={true} theme={theme} scale={1.1} />
+      <HumanHand x={45} y={handY} grip={true} theme={theme} scale={1.1} />
 
-      {/* Resistance Band */}
-      <line
-        x1={-65 - pullDown}
-        y1={30 + pullDown}
-        x2={65 + pullDown}
-        y2={30 + pullDown}
-        stroke="#f43f5e"
-        strokeWidth="4"
-        strokeDasharray="6 3"
-      />
-
-      {/* Latissimus Back Glow */}
-      {showGlow && (
-        <>
-          <circle cx="-28" cy="85" r="16" fill="#10b981" opacity="0.7" filter="url(#muscleGlow)" />
-          <circle cx="28" cy="85" r="16" fill="#10b981" opacity="0.7" filter="url(#muscleGlow)" />
-        </>
-      )}
-
-      {/* Shorts */}
-      <rect x="-20" y="130" width="40" height="55" rx="8" fill="url(#shortsGrad)" />
-
-      <text x="0" y="215" fill="#10b981" textAnchor="middle" fontSize="10" fontFamily="monospace" fontWeight="bold">
-        {progress > 0.7 ? '🔥 Squeeze Shoulder Blades Together' : 'Pull Band to Upper Clavicle'}
+      <text x="-75" y="35" fill="#10b981" fontSize="11" fontFamily="sans-serif" fontWeight="bold">
+        ✅ Squeeze Latissimus Dorsi to Pockets
       </text>
     </g>
   );
 };
 
 /* =========================================================================
-   10. EXPLOSIVE BURPEE KINEMATIC MODEL
+   10. BURPEE KINEMATIC MODEL
 ========================================================================= */
 export const BurpeeCharacter: React.FC<KinematicProps> = ({
   progress,
@@ -886,136 +1000,100 @@ export const BurpeeCharacter: React.FC<KinematicProps> = ({
   characterType,
   showGlow
 }) => {
-  let stageText = '1. Squat Down to Floor';
-  let jumpY = 0;
+  // 3-phase burpee cycle (Jump -> Drop to Plank -> Jump)
+  const isJumping = progress > 0.75;
+  const isFloor = progress > 0.25 && progress <= 0.6;
 
-  if (progress < 0.25) {
-    stageText = '1. Drop to Squat Hands on Floor';
-  } else if (progress < 0.5) {
-    stageText = '2. Kick Feet Back into Plank';
-  } else if (progress < 0.75) {
-    stageText = '3. Snap Feet In Toward Hands';
-  } else {
-    stageText = '4. Explosive Vertical Jump!';
-    jumpY = -40 * Math.sin(((progress - 0.75) / 0.25) * Math.PI);
+  if (isFloor) {
+    return <PushupCharacter progress={0.5} viewAngle="side" colors={{}} theme={theme} characterType={characterType} showMistake={false} showGlow={showGlow} />;
   }
 
+  const jumpHeight = isJumping ? (progress - 0.75) * 4 * 45 : 0;
+  const yBase = 160 - jumpHeight;
+
   return (
-    <g transform={`translate(200, ${95 + jumpY})`}>
-      {/* Head */}
-      <HumanHeadFront
-        x={0}
-        y={-35}
-        scale={0.95}
-        theme={theme}
-        characterType={characterType}
-      />
+    <g transform="translate(200, 0)">
+      {/* Studio Floor & Dynamic Jumping Shadow */}
+      <line x1="-120" y1="205" x2="120" y2="205" stroke="#475569" strokeWidth="2.5" opacity="0.6" />
+      <ellipse cx="0" cy="207" rx={45 - jumpHeight * 0.4} ry={8 - jumpHeight * 0.1} fill="#000000" opacity={0.35 - jumpHeight * 0.005} filter="url(#contactShadow)" />
+
+      {/* Head Front */}
+      <HumanHeadFront x={0} y={yBase - 85} scale={0.92} theme={theme} characterType={characterType} />
 
       {/* Torso */}
-      <rect x="-20" y="-15" width="40" height="58" rx="10" fill="url(#tankGrad)" stroke="#0f172a" strokeWidth="1" />
+      <path
+        d={`M -25 ${yBase - 55} C -28 ${yBase - 25}, -20 ${yBase - 5}, -18 ${yBase} L 18 ${yBase} C 20 ${yBase - 5}, 28 ${yBase - 25}, 25 ${yBase - 55} Z`}
+        fill="url(#tankGrad)"
+        stroke="#0f172a"
+        strokeWidth="1.2"
+      />
 
-      {/* High Reaching Arms for Jump */}
-      {progress >= 0.75 ? (
-        <>
-          <path d="M -18 -8 L -28 -65" stroke="url(#skinGrad)" strokeWidth="12" strokeLinecap="round" />
-          <HumanHand x={-28} y={-65} grip={false} theme={theme} scale={1.1} />
-          <path d="M 18 -8 L 28 -65" stroke="url(#skinGrad)" strokeWidth="12" strokeLinecap="round" />
-          <HumanHand x={28} y={-65} grip={false} theme={theme} scale={1.1} />
-        </>
-      ) : (
-        <path d="M -16 -4 L -28 35 L 0 45" fill="none" stroke="url(#skinGrad)" strokeWidth="11" strokeLinecap="round" />
-      )}
+      {/* Overhead Explosive Reach Arms */}
+      <path d={`M -25 ${yBase - 50} L -35 ${yBase - 100}`} fill="none" stroke="url(#limbGrad)" strokeWidth="13" strokeLinecap="round" />
+      <HumanHand x={-35} y={yBase - 100} grip={false} theme={theme} scale={1.1} />
 
-      {/* Legs & Sneakers */}
-      <line x1="-12" y1="43" x2="-16" y2="85" stroke="url(#shortsGrad)" strokeWidth="16" strokeLinecap="round" />
-      <HumanSneaker x={-16} y={88} facingLeft={true} angle={0} theme={theme} scale={1.05} />
+      <path d={`M 25 ${yBase - 50} L 35 ${yBase - 100}`} fill="none" stroke="url(#limbGrad)" strokeWidth="13" strokeLinecap="round" />
+      <HumanHand x={35} y={yBase - 100} grip={false} theme={theme} scale={1.1} />
 
-      <line x1="12" y1="43" x2="16" y2="85" stroke="url(#shortsGrad)" strokeWidth="16" strokeLinecap="round" />
-      <HumanSneaker x={16} y={88} facingLeft={false} angle={0} theme={theme} scale={1.05} />
+      {/* Legs */}
+      <path d={`M -15 ${yBase} L -22 195`} fill="none" stroke="url(#shortsGrad)" strokeWidth="16" strokeLinecap="round" />
+      <HumanSneaker x={-22} y={195 - jumpHeight} facingLeft={true} theme={theme} scale={1.05} />
 
-      {/* Full Body Explosive Glow */}
-      {showGlow && (
-        <circle cx="0" cy="15" r="32" fill="#10b981" opacity="0.6" filter="url(#muscleGlow)" />
-      )}
+      <path d={`M 15 ${yBase} L 22 195`} fill="none" stroke="url(#shortsGrad)" strokeWidth="16" strokeLinecap="round" />
+      <HumanSneaker x={22} y={195 - jumpHeight} facingLeft={false} theme={theme} scale={1.05} />
 
-      <text x="0" y="125" fill="#10b981" textAnchor="middle" fontSize="10" fontFamily="monospace" fontWeight="bold">
-        {stageText}
+      <text x="-65" y="40" fill="#10b981" fontSize="11" fontFamily="sans-serif" fontWeight="bold">
+        ✅ Explosive Triple Extension
       </text>
     </g>
   );
 };
 
 /* =========================================================================
-   11. GENERIC ATHLETIC COACH POSTURE
+   11. GENERIC ATHLETIC / CARDIO KINEMATIC MODEL
 ========================================================================= */
-export const GenericAthleticCharacter: React.FC<{
-  progress: number;
-  viewAngle: ViewAngle;
-  theme: CharacterTheme;
-  characterType: CoachCharacter;
-  exerciseName: string;
-  targetMuscle: string;
-  showGlow: boolean;
-}> = ({
+export const GenericAthleticCharacter: React.FC<KinematicProps> = ({
   progress,
   theme,
   characterType,
-  targetMuscle,
   showGlow
 }) => {
-  const bob = Math.sin(progress * Math.PI * 2) * 8;
+  const bounce = Math.sin(progress * Math.PI * 2) * 8;
+  const yBase = 150 + bounce;
+
   return (
-    <g transform="translate(200, 25)">
+    <g transform="translate(200, 0)">
+      {/* Studio Floor & Shadow */}
+      <line x1="-120" y1="205" x2="120" y2="205" stroke="#475569" strokeWidth="2.5" opacity="0.6" />
+      <ellipse cx="0" cy="207" rx="55" ry="9" fill="#000000" opacity="0.3" filter="url(#contactShadow)" />
+
       {/* Head */}
-      <HumanHeadFront
-        x={0}
-        y={35 + bob}
-        scale={0.95}
-        theme={theme}
-        characterType={characterType}
-      />
+      <HumanHeadFront x={0} y={yBase - 82} scale={0.92} theme={theme} characterType={characterType} />
 
       {/* Torso */}
       <path
-        d={`M -25 ${58 + bob} C -30 ${85 + bob}, -22 ${110 + bob}, -18 ${125 + bob} L 18 ${125 + bob} C 22 ${110 + bob}, 30 ${85 + bob}, 25 ${58 + bob} Z`}
+        d={`M -25 ${yBase - 55} C -28 ${yBase - 25}, -20 ${yBase - 5}, -18 ${yBase} L 18 ${yBase} C 20 ${yBase - 5}, 28 ${yBase - 25}, 25 ${yBase - 55} Z`}
         fill="url(#tankGrad)"
         stroke="#0f172a"
         strokeWidth="1.2"
       />
 
-      {/* Athletic Guard Posture Arms */}
-      <path
-        d={`M -24 ${68 + bob} Q -42 ${95 + bob} -25 ${115 + bob}`}
-        fill="none"
-        stroke="url(#skinGrad)"
-        strokeWidth="13"
-        strokeLinecap="round"
-      />
-      <HumanHand x={-25} y={115 + bob} grip={true} theme={theme} scale={1.1} />
+      {/* Arms in Athletic Running Motion */}
+      <path d={`M -25 ${yBase - 50} L -38 ${yBase - 15}`} fill="none" stroke="url(#limbGrad)" strokeWidth="13" strokeLinecap="round" />
+      <HumanHand x={-38} y={yBase - 15} grip={true} theme={theme} scale={1.1} />
 
-      <path
-        d={`M 24 ${68 + bob} Q 42 ${95 + bob} 25 ${115 + bob}`}
-        fill="none"
-        stroke="url(#skinGrad)"
-        strokeWidth="13"
-        strokeLinecap="round"
-      />
-      <HumanHand x={25} y={115 + bob} grip={true} theme={theme} scale={1.1} />
+      <path d={`M 25 ${yBase - 50} L 38 ${yBase - 15}`} fill="none" stroke="url(#limbGrad)" strokeWidth="13" strokeLinecap="round" />
+      <HumanHand x={38} y={yBase - 15} grip={true} theme={theme} scale={1.1} />
 
-      {/* Target Muscle Glow */}
-      {showGlow && (
-        <circle cx="0" cy={85 + bob} r="22" fill="#10b981" opacity="0.65" filter="url(#muscleGlow)" />
-      )}
+      {/* Legs */}
+      <path d={`M -15 ${yBase} L -22 195`} fill="none" stroke="url(#shortsGrad)" strokeWidth="17" strokeLinecap="round" />
+      <HumanSneaker x={-22} y={195} facingLeft={true} theme={theme} scale={1.05} />
 
-      {/* Lower Body */}
-      <rect x="-18" y={125 + bob} width="16" height="55" rx="6" fill="url(#shortsGrad)" />
-      <HumanSneaker x={-10} y={185 + bob} facingLeft={true} angle={0} theme={theme} scale={1.05} />
+      <path d={`M 15 ${yBase} L 22 195`} fill="none" stroke="url(#shortsGrad)" strokeWidth="17" strokeLinecap="round" />
+      <HumanSneaker x={22} y={195} facingLeft={false} theme={theme} scale={1.05} />
 
-      <rect x="2" y={125 + bob} width="16" height="55" rx="6" fill="url(#shortsGrad)" />
-      <HumanSneaker x={10} y={185 + bob} facingLeft={false} angle={0} theme={theme} scale={1.05} />
-
-      <text x="0" y={220} fill="#10b981" textAnchor="middle" fontSize="10" fontFamily="monospace" fontWeight="bold">
-        Active Target: {targetMuscle}
+      <text x="-65" y="45" fill="#10b981" fontSize="11" fontFamily="sans-serif" fontWeight="bold">
+        ✅ Steady Rhythm & Controlled Breathing
       </text>
     </g>
   );

@@ -32,6 +32,8 @@ import { EXERCISE_LIBRARY } from '../data/defaultData';
 import { requestWorkoutRoadmap } from '../services/api';
 import { ExerciseDemoModal } from './ExerciseDemoModal';
 import { WorkoutMusicPlayer } from './WorkoutMusicPlayer';
+import { themeService } from '../services/themeService';
+import { FileText, Palette } from 'lucide-react';
 
 interface WorkoutRoadmapViewProps {
   roadmap: WorkoutRoadmap;
@@ -230,7 +232,7 @@ export const WorkoutRoadmapView: React.FC<WorkoutRoadmapViewProps> = ({
                           <Clock className="w-3 h-3 text-slate-400" /> {day.estimatedMinutes}m
                         </span>
                         <span className="flex items-center gap-1">
-                          <Flame className="w-3 h-3 text-amber-400" /> {day.estimatedCaloriesBurn} kcal
+                          <Flame className="w-3 h-3 text-amber-400" /> {themeService.formatEnergy(day.estimatedCaloriesBurn)}
                         </span>
                       </div>
                     </div>

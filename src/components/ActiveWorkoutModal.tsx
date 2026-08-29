@@ -15,7 +15,8 @@ import {
   RefreshCw,
   Sparkles,
   Maximize2,
-  Activity
+  Activity,
+  Quote
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { WorkoutDay, Exercise } from '../types';
@@ -23,6 +24,8 @@ import { playCountdownBeep, playRepSuccessBeep, playWorkoutCompleteChime } from 
 import { HumanExerciseVisualizer } from './HumanExerciseVisualizer';
 import { ExerciseDemoModal } from './ExerciseDemoModal';
 import { WorkoutMusicPlayer } from './WorkoutMusicPlayer';
+import { getDailyWorkoutMotivation } from '../data/defaultData';
+import { themeService } from '../services/themeService';
 
 interface ActiveWorkoutModalProps {
   workoutDay: WorkoutDay;
@@ -44,6 +47,10 @@ export const ActiveWorkoutModal: React.FC<ActiveWorkoutModalProps> = ({
   const [workoutSecondsElapsed, setWorkoutSecondsElapsed] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
   const [showDemoModal, setShowDemoModal] = useState(false);
+  const [showMotivationBanner, setShowMotivationBanner] = useState(true);
+
+  // Daily motivation phrase for training
+  const [dailyMotivation] = useState(() => getDailyWorkoutMotivation());
 
   // Timed exercise countdown state
   const [exerciseSecondsRemaining, setExerciseSecondsRemaining] = useState<number | null>(null);
@@ -174,33 +181,33 @@ export const ActiveWorkoutModal: React.FC<ActiveWorkoutModalProps> = ({
 
   if (isCompleted) {
     return (
-      <div className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-4">
-        <div className="bg-slate-900 border border-emerald-500/30 rounded-3xl p-6 sm:p-10 max-w-lg w-full text-center relative shadow-2xl">
+      <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-4">
+        <div className="bg-white dark:bg-slate-900 border border-emerald-500/30 rounded-3xl p-6 sm:p-10 max-w-lg w-full text-center relative shadow-2xl transition-colors">
           
-          <div className="w-20 h-20 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/40 rounded-full flex items-center justify-center mx-auto mb-6">
             <Award className="w-10 h-10" />
           </div>
 
-          <h2 className="text-3xl font-extrabold text-white font-['Outfit'] mb-2">Workout Crushed! 🚀</h2>
-          <p className="text-slate-400 text-sm mb-8">
-            You completed <span className="text-emerald-400 font-semibold">{workoutDay.dayName}</span> right at home!
+          <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white font-['Outfit'] mb-2">Workout Crushed! 🚀</h2>
+          <p className="text-slate-600 dark:text-slate-400 text-sm mb-8">
+            You completed <span className="text-emerald-600 dark:text-emerald-400 font-bold">{workoutDay.dayName}</span> right at home!
           </p>
 
           <div className="grid grid-cols-2 gap-4 mb-8">
-            <div className="bg-slate-800/80 border border-slate-700/60 p-4 rounded-2xl">
-              <div className="flex items-center justify-center gap-1.5 text-slate-400 text-xs mb-1">
-                <Clock className="w-4 h-4 text-emerald-400" />
+            <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 p-4 rounded-2xl">
+              <div className="flex items-center justify-center gap-1.5 text-slate-500 dark:text-slate-400 text-xs mb-1">
+                <Clock className="w-4 h-4 text-emerald-500" />
                 <span>Total Time</span>
               </div>
-              <p className="text-2xl font-black text-white">{formatTime(workoutSecondsElapsed)}</p>
+              <p className="text-2xl font-black text-slate-900 dark:text-white">{formatTime(workoutSecondsElapsed)}</p>
             </div>
 
-            <div className="bg-slate-800/80 border border-slate-700/60 p-4 rounded-2xl">
-              <div className="flex items-center justify-center gap-1.5 text-slate-400 text-xs mb-1">
-                <Flame className="w-4 h-4 text-amber-400" />
+            <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 p-4 rounded-2xl">
+              <div className="flex items-center justify-center gap-1.5 text-slate-500 dark:text-slate-400 text-xs mb-1">
+                <Flame className="w-4 h-4 text-amber-500" />
                 <span>Est. Calories</span>
               </div>
-              <p className="text-2xl font-black text-amber-400">{caloriesBurnedEst} kcal</p>
+              <p className="text-2xl font-black text-amber-600 dark:text-amber-400">{caloriesBurnedEst} kcal</p>
             </div>
           </div>
 
@@ -216,7 +223,7 @@ export const ActiveWorkoutModal: React.FC<ActiveWorkoutModalProps> = ({
                 });
                 onClose();
               }}
-              className="w-full py-3.5 px-6 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition-colors shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2"
+              className="w-full py-3.5 px-6 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black transition-colors shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2"
             >
               <CheckCircle2 className="w-5 h-5" />
               <span>Save & Log to Calorie Tracker</span>
@@ -224,7 +231,7 @@ export const ActiveWorkoutModal: React.FC<ActiveWorkoutModalProps> = ({
 
             <button
               onClick={onClose}
-              className="w-full py-3 px-6 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold transition-colors"
+              className="w-full py-3 px-6 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold transition-colors"
             >
               Close Session
             </button>
@@ -236,15 +243,15 @@ export const ActiveWorkoutModal: React.FC<ActiveWorkoutModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950 flex flex-col">
+    <div className="fixed inset-0 z-50 bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col transition-colors">
       
       {/* Top Header Bar */}
-      <div className="px-4 sm:px-6 py-4 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
+      <div className="px-4 sm:px-6 py-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-sm">
         <div>
-          <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
+          <span className="text-xs font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
             Exercise {currentExerciseIndex + 1} of {totalExercises}
           </span>
-          <h1 className="text-lg sm:text-xl font-bold text-white truncate max-w-xs sm:max-w-md">
+          <h1 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white truncate max-w-xs sm:max-w-md">
             {workoutDay.dayName}
           </h1>
         </div>
@@ -254,8 +261,8 @@ export const ActiveWorkoutModal: React.FC<ActiveWorkoutModalProps> = ({
             onClick={() => setSoundEnabled(!soundEnabled)}
             className={`p-2.5 rounded-xl border transition-colors ${
               soundEnabled 
-                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' 
-                : 'bg-slate-800 border-slate-700 text-slate-400'
+                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400' 
+                : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400'
             }`}
             title={soundEnabled ? 'Mute audio cues' : 'Enable audio cues'}
           >
@@ -264,7 +271,7 @@ export const ActiveWorkoutModal: React.FC<ActiveWorkoutModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 transition-colors"
+            className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -272,24 +279,56 @@ export const ActiveWorkoutModal: React.FC<ActiveWorkoutModalProps> = ({
       </div>
 
       {/* Main workout content area */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6 max-w-4xl mx-auto w-full flex flex-col justify-between">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 max-w-4xl mx-auto w-full flex flex-col justify-between space-y-4">
         
+        {/* Daily Motivation Banner when starting training */}
+        {showMotivationBanner && (
+          <div className="relative p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-amber-500/15 border border-emerald-500/30 shadow-sm flex items-start justify-between gap-3 animate-fadeIn">
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-xl bg-emerald-500 text-slate-950 flex items-center justify-center flex-shrink-0 shadow-md font-bold text-lg">
+                {dailyMotivation.icon}
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-0.5">
+                  <span className="text-[11px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-amber-500" /> Daily Training Fuel
+                  </span>
+                </div>
+                <p className="text-sm font-extrabold text-slate-900 dark:text-white italic">
+                  "{dailyMotivation.quote}"
+                </p>
+                <span className="text-xs text-slate-600 dark:text-slate-400 font-semibold block mt-0.5">
+                  — {dailyMotivation.author}
+                </span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowMotivationBanner(false)}
+              className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-1 transition-colors"
+              title="Dismiss quote"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
         {/* Progress Bar & Stats */}
-        <div className="mb-4">
-          <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+        <div>
+          <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 mb-2 font-semibold">
             <span>Progress: {Math.round(((currentExerciseIndex + (currentSet / totalSets)) / totalExercises) * 100)}%</span>
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5 text-emerald-400" />
+                <Clock className="w-3.5 h-3.5 text-emerald-500" />
                 {formatTime(workoutSecondsElapsed)}
               </span>
               <span className="flex items-center gap-1">
-                <Flame className="w-3.5 h-3.5 text-amber-400" />
+                <Flame className="w-3.5 h-3.5 text-amber-500" />
                 {caloriesBurnedEst} kcal
               </span>
             </div>
           </div>
-          <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+          <div className="w-full h-2.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
             <div 
               className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-300"
               style={{ width: `${((currentExerciseIndex + (currentSet / totalSets)) / totalExercises) * 100}%` }}
@@ -298,7 +337,7 @@ export const ActiveWorkoutModal: React.FC<ActiveWorkoutModalProps> = ({
         </div>
 
         {/* Workout Music Player Bar */}
-        <div className="mb-4">
+        <div>
           <WorkoutMusicPlayer
             currentExerciseId={currentEx?.id}
             currentExerciseName={currentEx?.name}
@@ -308,43 +347,43 @@ export const ActiveWorkoutModal: React.FC<ActiveWorkoutModalProps> = ({
 
         {/* Dynamic Card: Active Exercise or Rest Mode */}
         {isResting ? (
-          <div className="bg-slate-900/90 border border-teal-500/30 rounded-3xl p-6 sm:p-10 text-center my-auto shadow-2xl relative overflow-hidden">
+          <div className="bg-white dark:bg-slate-900/90 border border-teal-500/40 rounded-3xl p-6 sm:p-10 text-center my-auto shadow-xl relative overflow-hidden transition-colors">
             <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-teal-500/10 rounded-full blur-3xl" />
-            <span className="inline-block px-3 py-1 bg-teal-500/20 text-teal-300 font-bold text-xs rounded-full uppercase tracking-wider mb-4">
+            <span className="inline-block px-3 py-1 bg-teal-500/20 text-teal-700 dark:text-teal-300 font-extrabold text-xs rounded-full uppercase tracking-wider mb-4">
               Rest & Breathe
             </span>
-            <div className="text-6xl sm:text-8xl font-black text-white font-mono tracking-tight my-4">
+            <div className="text-6xl sm:text-8xl font-black text-slate-900 dark:text-white font-mono tracking-tight my-4">
               {restSecondsRemaining}s
             </div>
-            <p className="text-slate-400 text-sm mb-6">
-              Next Up: <span className="text-white font-semibold">{currentEx?.name}</span> (Set {currentSet} of {totalSets})
+            <p className="text-slate-600 dark:text-slate-400 text-sm mb-6">
+              Next Up: <span className="text-slate-900 dark:text-white font-bold">{currentEx?.name}</span> (Set {currentSet} of {totalSets})
             </p>
             <div className="flex justify-center gap-3">
               <button
                 onClick={() => setRestSecondsRemaining(prev => prev + 15)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold transition-colors"
+                className="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-bold transition-colors"
               >
                 +15s Rest
               </button>
               <button
                 id="skip-rest-btn"
                 onClick={() => setIsResting(false)}
-                className="px-6 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-sm transition-colors"
+                className="px-6 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-black text-sm transition-colors shadow-md shadow-teal-500/20"
               >
                 Skip Rest & Go!
               </button>
             </div>
           </div>
         ) : (
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 my-auto shadow-xl space-y-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-6 my-auto shadow-md dark:shadow-xl space-y-4 transition-colors">
             
             {/* Header info */}
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
                   Set {currentSet} of {totalSets}
                 </span>
-                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                   Target: {currentEx?.targetMuscle}
                 </span>
               </div>
@@ -353,18 +392,18 @@ export const ActiveWorkoutModal: React.FC<ActiveWorkoutModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowDemoModal(true)}
-                  className="px-3 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1.5 transition-colors"
+                  className="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold flex items-center gap-1.5 transition-colors"
                 >
-                  <Activity className="w-3.5 h-3.5 text-emerald-400" />
+                  <Activity className="w-3.5 h-3.5 text-emerald-500" />
                   <span>Full Form Studio</span>
                 </button>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-slate-500 dark:text-slate-400">
                   {currentEx?.equipment === 'bodyweight_only' ? 'Bodyweight' : currentEx?.equipment.replace('_', ' ')}
                 </span>
               </div>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white font-['Outfit']">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white font-['Outfit']">
               {currentEx?.name}
             </h2>
 
@@ -381,12 +420,12 @@ export const ActiveWorkoutModal: React.FC<ActiveWorkoutModalProps> = ({
             )}
 
             {/* Target requirement: Reps or Timer */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-slate-800/60 border border-slate-700/60 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
-                <span className="text-xs uppercase tracking-wider text-slate-400 font-semibold block mb-1">
+                <span className="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold block mb-1">
                   {currentEx?.type === 'reps' ? 'Target Repetitions' : 'Active Duration'}
                 </span>
-                <div className="text-3xl sm:text-4xl font-black text-emerald-400 font-mono">
+                <div className="text-3xl sm:text-4xl font-black text-emerald-600 dark:text-emerald-400 font-mono">
                   {currentEx?.type === 'reps' ? `${currentItem?.reps || currentEx.defaultReps || 12} Reps` : `${exerciseSecondsRemaining ?? currentItem?.durationSeconds ?? 45}s`}
                 </div>
               </div>
@@ -405,15 +444,15 @@ export const ActiveWorkoutModal: React.FC<ActiveWorkoutModalProps> = ({
             {/* Step by step Form guidance */}
             <div className="space-y-3">
               <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Coach Cue:</h4>
-                <p className="text-xs sm:text-sm text-slate-300 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Coach Cue:</h4>
+                <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-950/60 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
                   {currentEx?.instructions[0] || 'Execute with controlled cadence and strong breathing.'}
                 </p>
               </div>
 
               {currentEx?.tips && currentEx.tips.length > 0 && (
-                <div className="p-2.5 bg-emerald-950/40 border border-emerald-500/20 rounded-xl text-xs text-emerald-300">
-                  💡 <span className="font-semibold">Coach Tip:</span> {currentEx.tips[0]}
+                <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-500/20 rounded-xl text-xs text-emerald-800 dark:text-emerald-300">
+                  💡 <span className="font-bold">Coach Tip:</span> {currentEx.tips[0]}
                 </div>
               )}
             </div>
@@ -422,18 +461,18 @@ export const ActiveWorkoutModal: React.FC<ActiveWorkoutModalProps> = ({
         )}
 
         {/* Bottom controls: Pause / Skip */}
-        <div className="mt-4 flex items-center justify-between gap-3 pt-4 border-t border-slate-800">
+        <div className="mt-4 flex items-center justify-between gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
           <button
             onClick={() => setIsActive(!isActive)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold transition-colors"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-bold transition-colors"
           >
-            {isActive ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 text-emerald-400" />}
+            {isActive ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 text-emerald-500" />}
             <span>{isActive ? 'Pause Workout' : 'Resume Workout'}</span>
           </button>
 
           <button
             onClick={handleSkipExercise}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-bold transition-colors"
           >
             <span>Skip Exercise</span>
             <SkipForward className="w-4 h-4" />

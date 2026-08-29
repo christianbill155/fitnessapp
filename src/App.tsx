@@ -19,7 +19,10 @@ import {
   CheckCircle2,
   X,
   WifiOff,
-  User
+  User,
+  Palette,
+  Quote,
+  Sliders
 } from 'lucide-react';
 import { 
   AppTab, 
@@ -43,6 +46,12 @@ import {
   addWorkoutToDailyLog
 } from './services/storage';
 import { getCurrentUser } from './services/auth';
+import { 
+  themeService, 
+  AppPersonalization, 
+  COLOR_THEMES, 
+  BACKGROUND_PRESETS 
+} from './services/themeService';
 
 // Components
 import { Navbar } from './components/Navbar';
@@ -53,6 +62,7 @@ import { AiCoachView } from './components/AiCoachView';
 import { ActiveWorkoutModal } from './components/ActiveWorkoutModal';
 import { SubscriptionModal } from './components/SubscriptionModal';
 import { ProfileSettingsModal } from './components/ProfileSettingsModal';
+import { PersonalizationModal } from './components/PersonalizationModal';
 import { AuthModal } from './components/AuthModal';
 import { OfflineManagerModal } from './components/OfflineManagerModal';
 
@@ -64,6 +74,10 @@ export default function App() {
   // Authentication State
   const [currentUser, setCurrentUser] = useState<AuthUser>(() => getCurrentUser());
 
+  // Personalization & Theme State
+  const [personalization, setPersonalization] = useState<AppPersonalization>(() => themeService.getSettings());
+  const [mottoBannerDismissed, setMottoBannerDismissed] = useState(false);
+
   // Persistent Domain State
   const [profile, setProfile] = useState<UserProfile>(() => loadUserProfile());
   const [roadmap, setRoadmap] = useState<WorkoutRoadmap>(() => loadWorkoutRoadmap());
@@ -74,12 +88,21 @@ export default function App() {
   const [activeWorkoutDay, setActiveWorkoutDay] = useState<WorkoutDay | null>(null);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showPersonalizationModal, setShowPersonalizationModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showOfflineModal, setShowOfflineModal] = useState(false);
 
   // PWA Install Prompt State
   const [installPromptEvent, setInstallPromptEvent] = useState<any>(null);
   const [showInstallBanner, setShowInstallBanner] = useState(true);
+
+  // Subscribe to Theme / Personalization Changes
+  useEffect(() => {
+    const unsub = themeService.subscribe((s) => {
+      setPersonalization(s);
+    });
+    return unsub;
+  }, []);
 
   // Online / Offline Listeners
   useEffect(() => {
@@ -180,17 +203,60 @@ export default function App() {
     setActiveTab('calories');
   };
 
+  const currentTheme = COLOR_THEMES[personalization.colorTheme] || COLOR_THEMES.emerald;
+  const currentBgPreset = BACKGROUND_PRESETS.find(p => p.id === personalization.backgroundPreset) || BACKGROUND_PRESETS[0];
+  const isLight = themeService.isLightMode();
+
+  const hasCustomBgImage = Boolean(
+    (personalization.backgroundPreset === 'custom_uploaded' || personalization.customBackgroundImageUrl) &&
+    personalization.customBackgroundImageUrl
+  );
+
+  const bgFit = personalization.backgroundFit || 'cover';
+  const bgSize = bgFit === 'contain' ? 'contain' : bgFit === 'tile' ? 'auto' : 'cover';
+  const bgRepeat = bgFit === 'tile' ? 'repeat' : 'no-repeat';
+
+  const overlayTintClass = personalization.backgroundOverlayTint === 'none'
+    ? 'opacity-0'
+    : personalization.backgroundOverlayTint === 'light'
+    ? 'bg-white/40'
+    : personalization.backgroundOverlayTint === 'dark'
+    ? 'bg-slate-950/60'
+    : isLight
+    ? 'bg-white/40'
+    : 'bg-slate-950/50';
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif] antialiased selection:bg-emerald-500 selection:text-slate-950">
+    <div className={`min-h-screen ${isLight ? 'bg-slate-50 text-slate-900 selection:bg-emerald-200 selection:text-emerald-950' : 'bg-slate-950 text-slate-100 selection:bg-slate-700 selection:text-white'} flex flex-col font-['Plus_Jakarta_Sans',sans-serif] antialiased relative overflow-x-hidden transition-colors duration-300`}>
       
+      {/* ATMOSPHERIC BACKGROUND SYSTEM / CUSTOM WALLPAPER */}
+      <div 
+        className="fixed inset-0 pointer-events-none z-0 transition-all duration-700"
+        style={{
+          backgroundImage: hasCustomBgImage
+            ? `url(${personalization.customBackgroundImageUrl})`
+            : undefined,
+          background: !hasCustomBgImage ? currentBgPreset.cssBackground : undefined,
+          backgroundPosition: 'center center',
+          backgroundSize: bgSize,
+          backgroundRepeat: bgRepeat,
+          backgroundAttachment: 'fixed',
+          opacity: personalization.backgroundOpacity ?? 0.25,
+          filter: personalization.backgroundBlur > 0 ? `blur(${personalization.backgroundBlur}px)` : 'none'
+        }}
+      />
+
+      {/* Subtle UI Readability Tint */}
+      <div className={`fixed inset-0 pointer-events-none z-0 ${overlayTintClass} backdrop-blur-[0.5px] transition-colors duration-300`} />
+
       {/* Top Banner for App Creator / Offline Install */}
       {currentUser.isOwner && showInstallBanner && (
-        <aside aria-label="Creator banner" className="bg-gradient-to-r from-amber-500/20 via-slate-900 to-emerald-500/10 border-b border-amber-500/30 px-4 py-2 text-xs">
+        <aside aria-label="Creator banner" className="relative z-10 bg-gradient-to-r from-amber-500/20 via-slate-900 to-slate-900 border-b border-amber-500/30 px-4 py-2 text-xs">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <span className="p-1 rounded bg-amber-500 text-slate-950 font-bold text-[10px]">👑 CREATOR</span>
               <span className="text-slate-200">
-                Welcome, <strong>poccnkcc</strong>! Lifetime VIP Free Pass is <strong>Active</strong> with 100% offline access after deployment.
+                Welcome, <strong>poccnkcc</strong>! Lifetime VIP Free Pass is <strong>Active</strong> with 100% offline access.
               </span>
             </div>
             <div className="flex items-center gap-3">
@@ -212,21 +278,59 @@ export default function App() {
         </aside>
       )}
 
+      {/* MOTIVATIONAL MOTTO BANNER */}
+      {personalization.showMottoBanner && !mottoBannerDismissed && (
+        <div 
+          className="relative z-10 border-b border-slate-800/80 px-4 py-2 text-xs flex items-center justify-between backdrop-blur-md transition-all"
+          style={{ 
+            backgroundColor: `rgba(${currentTheme.primaryRgb}, 0.06)`,
+            borderBottomColor: `rgba(${currentTheme.primaryRgb}, 0.15)`
+          }}
+        >
+          <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5 overflow-hidden">
+              <Quote className="w-3.5 h-3.5 shrink-0" style={{ color: currentTheme.primaryHex }} />
+              <span className="text-xs font-semibold text-slate-200 italic truncate">
+                {personalization.motivationalMotto}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => setShowPersonalizationModal(true)}
+                className="text-[11px] font-bold hover:underline flex items-center gap-1"
+                style={{ color: currentTheme.primaryHex }}
+              >
+                <Palette className="w-3 h-3" /> Edit Motto / Theme
+              </button>
+              <button
+                onClick={() => setMottoBannerDismissed(true)}
+                className="text-slate-400 hover:text-slate-200 p-1"
+                title="Dismiss banner"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Navigation Bar */}
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         profile={profile}
         currentUser={currentUser}
+        onOpenSettings={() => setShowProfileModal(true)}
+        onOpenPersonalization={() => setShowPersonalizationModal(true)}
         onOpenSubscription={() => setShowSubscriptionModal(true)}
-        onOpenProfile={() => setShowProfileModal(true)}
         onOpenAuth={() => setShowAuthModal(true)}
         onOpenOfflineManager={() => setShowOfflineModal(true)}
         isOnline={isOnline}
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <main className="relative z-10 flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {activeTab === 'workouts' && (
           <WorkoutRoadmapView
             roadmap={roadmap}
@@ -264,22 +368,29 @@ export default function App() {
       </main>
 
       {/* Footer info & quick summary */}
-      <footer className="border-t border-slate-900 bg-slate-950 py-6 px-4 text-center text-xs text-slate-500">
+      <footer className="relative z-10 border-t border-slate-900 bg-slate-950/80 backdrop-blur-md py-6 px-4 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-400 font-['Outfit']">FitRegion</span>
+            <span className="font-bold text-slate-300 font-['Outfit']">{personalization.appName}</span>
             <span>•</span>
-            <span>Home Fitness & Regional Nutrition Engine</span>
+            <span className="text-slate-400">{personalization.appSubtitle}</span>
             <span>•</span>
-            <span className="text-emerald-400 font-medium">100% Offline PWA Enabled</span>
+            <span style={{ color: currentTheme.primaryHex }} className="font-medium">100% Offline PWA Enabled</span>
           </div>
 
           <div className="flex items-center gap-4 text-[11px] text-slate-400">
             <button
+              onClick={() => setShowPersonalizationModal(true)}
+              className="text-slate-300 hover:text-white flex items-center gap-1 transition-colors"
+            >
+              <Palette className="w-3.5 h-3.5" style={{ color: currentTheme.primaryHex }} /> Theme & Colors
+            </button>
+            <span>•</span>
+            <button
               onClick={() => setShowAuthModal(true)}
               className="text-slate-300 hover:text-white flex items-center gap-1"
             >
-              <User className="w-3.5 h-3.5 text-emerald-400" /> Account: {currentUser.displayName}
+              <User className="w-3.5 h-3.5" style={{ color: currentTheme.primaryHex }} /> Account: {currentUser.displayName}
             </button>
             <span>•</span>
             <button
@@ -293,7 +404,7 @@ export default function App() {
               onClick={() => setShowOfflineModal(true)}
               className="text-slate-300 hover:underline flex items-center gap-1"
             >
-              <WifiOff className="w-3.5 h-3.5 text-emerald-400" /> Offline & Backup Hub
+              <WifiOff className="w-3.5 h-3.5" style={{ color: currentTheme.primaryHex }} /> Offline & Backup Hub
             </button>
           </div>
         </div>
@@ -326,7 +437,19 @@ export default function App() {
           currentUser={currentUser}
           onOpenAuth={() => setShowAuthModal(true)}
           onOpenOfflineManager={() => setShowOfflineModal(true)}
+          onOpenPersonalization={() => {
+            setShowProfileModal(false);
+            setShowPersonalizationModal(true);
+          }}
           onClose={() => setShowProfileModal(false)}
+        />
+      )}
+
+      {/* App Personalization & Customization Modal */}
+      {showPersonalizationModal && (
+        <PersonalizationModal
+          isOpen={showPersonalizationModal}
+          onClose={() => setShowPersonalizationModal(false)}
         />
       )}
 
