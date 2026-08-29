@@ -1,0 +1,6 @@
+{
+  "name": "FitRegion: Home Fitness & Budget Nutrition",
+  "description": "Personalized home workouts with or without equipment, regional budget-conscious meal plans, calorie & macro tracking, offline mode, and subscription tiers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
